@@ -1,0 +1,23 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 20px 0;
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+}
+
+.breadcrumb a:hover {
+  color: var(--purple-600);
+}
+
+.current {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.sep {
+  color: var(--ink-faint);
+  opacity: 0.6;
+}

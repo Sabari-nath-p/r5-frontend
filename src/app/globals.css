@@ -1,17 +1,34 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --cream: #fdf7ef;
+  --blush: #f7ede2;
+  --paper: #ffffff;
+  --purple-50: #f2ecfa;
+  --purple-100: #e4d6f7;
+  --purple-400: #9b6fd6;
+  --purple-500: #8356c9;
+  --purple-600: #6e3fb8;
+  --purple-700: #5a3195;
+  --purple-900: #3a1f66;
+  --purple-950: #2c1550;
+  --gold-400: #f8c94a;
+  --gold-500: #f3b529;
+  --gold-600: #e4a012;
+  --ink: #2a2233;
+  --ink-soft: #6b6274;
+  --ink-faint: #9b93a3;
+  --line: #ece3f3;
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+  --shadow-soft: 0 12px 30px -14px rgba(58, 31, 102, 0.25);
+  --shadow-card: 0 8px 24px -12px rgba(58, 31, 102, 0.18);
+  --max-width: 1280px;
 }
 
 html {
   height: 100%;
+  color-scheme: light;
 }
 
 html,
@@ -24,9 +41,10 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--ink);
+  background: var(--cream);
+  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -42,8 +60,29 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.display {
+  font-family: var(--font-display), Georgia, serif;
 }

@@ -1,0 +1,178 @@
+.footer {
+  background: linear-gradient(180deg, var(--purple-900) 0%, var(--purple-950) 100%);
+  color: rgba(255, 255, 255, 0.78);
+  border-radius: 40px 40px 0 0;
+  margin-top: 16px;
+  padding-top: 56px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 32px;
+  padding-bottom: 40px;
+}
+
+.brand .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.logoMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, var(--purple-400), var(--gold-500));
+  flex-shrink: 0;
+}
+
+.logo span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.logoName {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.logoTagline {
+  font-size: 0.65rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.desc {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  max-width: 300px;
+  margin-bottom: 20px;
+}
+
+.socials {
+  display: flex;
+  gap: 10px;
+}
+
+.socialBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.socialBtn:hover {
+  background: var(--gold-500);
+  border-color: var(--gold-500);
+  color: #3a2200;
+}
+
+.col h4,
+.newsletter h4 {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+.col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.col a {
+  font-size: 0.85rem;
+}
+
+.col a:hover {
+  color: #fff;
+}
+
+.newsletter p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.form {
+  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+}
+
+.form input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+}
+
+.form input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.form button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gold-500);
+  color: #3a2200;
+  flex-shrink: 0;
+}
+
+.bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.78rem;
+  flex-wrap: wrap;
+}
+
+.bottom p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.bottom p :global(svg) {
+  color: #e0507a;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

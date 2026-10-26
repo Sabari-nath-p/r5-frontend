@@ -1,0 +1,112 @@
+.art {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.sm {
+  border-radius: var(--radius-sm);
+}
+.md {
+  border-radius: var(--radius-md);
+}
+.lg {
+  border-radius: var(--radius-lg);
+}
+.full {
+  border-radius: var(--radius-pill);
+}
+
+.lavender {
+  background: linear-gradient(145deg, #efe4fb 0%, #f7ede2 100%);
+}
+.gold {
+  background: linear-gradient(145deg, #fde9b8 0%, #fbf0dc 100%);
+}
+.blush {
+  background: linear-gradient(145deg, #f7ede2 0%, #f3e1ee 100%);
+}
+.purple {
+  background: linear-gradient(145deg, var(--purple-500) 0%, var(--purple-700) 100%);
+}
+.cream {
+  background: linear-gradient(145deg, #fffaf2 0%, #f3e9e3 100%);
+}
+
+.blobA,
+.blobB {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(26px);
+  z-index: 0;
+}
+
+.blobA {
+  width: 55%;
+  height: 55%;
+  top: -12%;
+  right: -10%;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.blobB {
+  width: 40%;
+  height: 40%;
+  bottom: -14%;
+  left: -8%;
+  background: rgba(243, 181, 41, 0.28);
+}
+
+.purple .blobA {
+  background: rgba(255, 255, 255, 0.14);
+}
+.purple .blobB {
+  background: rgba(248, 201, 74, 0.25);
+}
+
+.icon {
+  position: relative;
+  z-index: 1;
+  width: 34%;
+  height: 34%;
+  color: var(--purple-600);
+  opacity: 0.55;
+}
+
+.purple .icon {
+  color: #ffffff;
+  opacity: 0.85;
+}
+
+.dot {
+  position: absolute;
+  z-index: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.dot1 {
+  width: 14px;
+  height: 14px;
+  top: 14%;
+  left: 12%;
+}
+
+.dot2 {
+  width: 9px;
+  height: 9px;
+  bottom: 18%;
+  right: 16%;
+  background: var(--gold-500);
+}
+
+.purple .dot1,
+.purple .dot2 {
+  background: rgba(255, 255, 255, 0.4);
+}

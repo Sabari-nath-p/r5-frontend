@@ -1,0 +1,43 @@
+.card {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.blob {
+  position: absolute;
+  z-index: 1;
+  top: -10%;
+  left: -8%;
+  width: 46%;
+  height: 46%;
+  background: var(--gold-400);
+  opacity: 0.55;
+  border-radius: 62% 38% 55% 45% / 48% 42% 58% 52%;
+  pointer-events: none;
+}
+
+.copy {
+  position: absolute;
+  z-index: 2;
+  top: 24px;
+  left: 24px;
+  max-width: 55%;
+}
+
+.text {
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  line-height: 1.35;
+  color: var(--purple-700);
+}
+
+.heart {
+  width: 34px;
+  height: 30px;
+  color: var(--purple-500);
+  margin-top: 14px;
+}
