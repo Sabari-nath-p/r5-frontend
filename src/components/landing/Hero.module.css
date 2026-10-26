@@ -373,20 +373,13 @@
   }
 
   .visual {
-    grid-row: 1;
-    min-height: 0;
-    height: clamp(270px, 78vw, 410px);
-    margin: 0 -20px;
-  }
-
-  .frame {
-    inset: 0;
-    border-radius: 0 0 24px 24px;
+    display: none;
   }
 
   .copy {
     grid-row: 2;
     padding: 34px 0 38px;
+    text-align: center;
   }
 
   .overline {
@@ -406,6 +399,8 @@
   .lead {
     font-size: 0.98rem;
     line-height: 1.65;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .cta {
@@ -413,38 +408,13 @@
   }
 
   .features {
+    justify-content: center;
     gap: 16px 18px;
     margin-top: 28px;
   }
 
   .features li {
     font-size: 0.8rem;
-  }
-
-  .messageBadge {
-    top: 12%;
-    right: 5%;
-    padding: 9px 12px;
-    font-size: 0.7rem;
-  }
-
-  .messageBadge strong {
-    font-size: 0.9rem;
-  }
-
-  .carouselControls {
-    right: 16px;
-    bottom: 16px;
-  }
-
-  .carouselControls button {
-    width: 36px;
-    height: 36px;
-  }
-
-  .dots {
-    bottom: 30px;
-    left: 16px;
   }
 }
 
