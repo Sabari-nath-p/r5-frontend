@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Gem, Heart, Minus, Plus, ShieldCheck, ShoppingBag, Truck } from "lucide-react";
+import { Gem, Heart, Minus, Plus, ShieldCheck, ShoppingBag, Trash2, Truck } from "lucide-react";
 import { cheapestVariation, toNumber, type ApiProduct } from "@/lib/api-types";
 import { useCart } from "@/lib/shop/cart-context";
 import { tiptapToPlainText } from "@/lib/tiptap-text";
@@ -17,14 +18,20 @@ const trustItems = [
 
 export default function ProductInfo({ product }: { product: ApiProduct }) {
   const router = useRouter();
-  const { add } = useCart();
+  const { lines, add, remove } = useCart();
   const defaultVariation = cheapestVariation(product.variations) ?? product.variations[0];
   const [variationId, setVariationId] = useState(defaultVariation?.id);
   const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
 
   const variation =
     product.variations.find((v) => v.id === variationId) ?? defaultVariation;
+
+  // The button follows the cart itself rather than a transient "added" flag, so
+  // it still reads correctly after a reload or a change made on the cart page.
+  const line = variation
+    ? lines.find((l) => l.productId === product.id && l.variationId === variation.id)
+    : undefined;
+  const inCart = line !== undefined;
 
   const price = variation ? toNumber(variation.price) : undefined;
   const originalPrice = variation ? toNumber(variation.strikeThroughPrice) : undefined;
@@ -35,12 +42,13 @@ export default function ProductInfo({ product }: { product: ApiProduct }) {
   const stock = variation?.stock ?? 0;
   const summary = product.metaDescription ?? tiptapToPlainText(product.description).slice(0, 220);
 
-  function addToCart() {
+  function toggleCart() {
     if (!variation) return;
-    add(product, variation, quantity);
-    setAdded(true);
-    // Reset the confirmation so a second add reads as a fresh action.
-    window.setTimeout(() => setAdded(false), 2000);
+    if (inCart) {
+      remove(product.id, variation.id);
+    } else {
+      add(product, variation, quantity);
+    }
   }
 
   function buyNow() {
@@ -120,12 +128,12 @@ export default function ProductInfo({ product }: { product: ApiProduct }) {
       <div className={styles.actions}>
         <button
           type="button"
-          className={styles.addToCart}
+          className={inCart ? styles.removeFromCart : styles.addToCart}
           disabled={stock === 0}
-          onClick={addToCart}
+          onClick={toggleCart}
         >
-          {added ? <Check size={17} /> : <ShoppingBag size={17} />}
-          {added ? "Added to Cart" : "Add to Cart"}
+          {inCart ? <Trash2 size={17} /> : <ShoppingBag size={17} />}
+          {inCart ? "Remove from Cart" : "Add to Cart"}
         </button>
         <button
           type="button"
@@ -136,6 +144,13 @@ export default function ProductInfo({ product }: { product: ApiProduct }) {
           Buy Now
         </button>
       </div>
+
+      {inCart && (
+        <p className={styles.cartNote}>
+          {line?.quantity} in your cart ·{" "}
+          <Link href="/cart">View cart</Link>
+        </p>
+      )}
 
       <ul className={styles.trust}>
         {trustItems.map(({ icon: Icon, label }) => (

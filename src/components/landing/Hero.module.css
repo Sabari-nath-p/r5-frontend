@@ -103,6 +103,10 @@
   gap: 14px;
 }
 
+.ctaLabelShort {
+  display: none;
+}
+
 /* Outlined sibling of .cta, so the gold button keeps the primary weight. */
 .instagramCta {
   display: inline-flex;
@@ -435,15 +439,32 @@
     margin-right: auto;
   }
 
+  /* Both calls to action stay on one line, sharing the width evenly. */
   .ctaRow {
+    flex-wrap: nowrap;
     justify-content: center;
     gap: 10px;
   }
 
   .cta,
   .instagramCta {
-    padding: 14px 24px;
-    font-size: 0.92rem;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 13px 14px;
+    font-size: 0.88rem;
+    white-space: nowrap;
+  }
+
+  .instagramCta {
+    gap: 7px;
+  }
+
+  .ctaLabelLong {
+    display: none;
+  }
+
+  .ctaLabelShort {
+    display: inline;
   }
 
   .features {

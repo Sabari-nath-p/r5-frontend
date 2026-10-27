@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Anton, Comic_Neue } from "next/font/google";
+import CartBar from "@/components/shop/CartBar";
 import ShopProviders from "@/lib/shop/providers";
 import "./globals.css";
 
@@ -36,7 +37,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${comicNeue.variable} ${anton.variable}`}>
       <body>
-        <ShopProviders>{children}</ShopProviders>
+        <ShopProviders>
+          {children}
+          {/* Floats over every storefront page while the cart has items. */}
+          <CartBar />
+        </ShopProviders>
       </body>
     </html>
   );

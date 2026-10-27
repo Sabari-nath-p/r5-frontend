@@ -60,7 +60,9 @@
 
 .tile {
   aspect-ratio: 1 / 1;
-  transition: transform 0.2s ease;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
 .tile a {
@@ -69,8 +71,11 @@
   height: 100%;
 }
 
+/* Hover is a shadow, not a zoom — nothing in a grid of images should resize
+   as the cursor passes over it. */
 .tile:hover {
-  transform: scale(1.04);
+  box-shadow: var(--shadow-card);
+  opacity: 0.92;
 }
 
 @media (max-width: 1080px) {

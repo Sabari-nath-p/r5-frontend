@@ -4,7 +4,6 @@ import BannerSlider from "@/components/landing/BannerSlider";
 import Categories from "@/components/landing/Categories";
 import FeaturedProducts from "@/components/landing/FeaturedProducts";
 import GiftBanner from "@/components/landing/GiftBanner";
-import Collections from "@/components/landing/Collections";
 import TrustBadges from "@/components/landing/TrustBadges";
 import Gallery from "@/components/landing/Gallery";
 import Footer from "@/components/landing/Footer";
@@ -33,7 +32,6 @@ export default async function Home() {
         <Categories categories={categories} />
         <FeaturedProducts products={featured} categories={categories} />
         <GiftBanner />
-        <Collections />
         <TrustBadges />
         <Gallery images={galleryImages} />
       </main>

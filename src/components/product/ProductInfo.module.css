@@ -185,6 +185,43 @@
   background: var(--gold-600);
 }
 
+/* Same footprint as Add to Cart, so the row doesn't resize when it flips. */
+.removeFromCart {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 20px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid #f3b8c4;
+  background: #fdeef1;
+  color: #a02048;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.removeFromCart:hover {
+  background: #fbe0e6;
+  border-color: #e8a3b3;
+}
+
+.cartNote {
+  margin: -14px 0 24px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.cartNote a {
+  color: var(--purple-600);
+  font-weight: 700;
+}
+
+.cartNote a:hover {
+  text-decoration: underline;
+}
+
 .buyNow {
   flex: 1;
   padding: 15px 20px;
@@ -201,6 +238,7 @@
 }
 
 .addToCart:disabled,
+.removeFromCart:disabled,
 .buyNow:disabled {
   opacity: 0.5;
   cursor: not-allowed;

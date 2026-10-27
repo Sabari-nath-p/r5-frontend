@@ -60,14 +60,17 @@ export default function Hero() {
             </a>
 
             <a
-              href="https://www.instagram.com/YOUR_INSTAGRAM_USERNAME/"
+              href="https://www.instagram.com/r5atelier/"
               target="_blank"
               rel="noopener noreferrer"
               className={styles.instagramCta}
               aria-label="Follow R5atelier on Instagram"
             >
               <InstagramIcon size={19} />
-              Follow on Instagram
+              {/* The full label needs more room than a phone has beside the
+                  Shop Now button, so a short form takes over there. */}
+              <span className={styles.ctaLabelLong}>Follow on Instagram</span>
+              <span className={styles.ctaLabelShort}>Instagram</span>
             </a>
           </div>
 

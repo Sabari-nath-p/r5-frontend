@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronDown, Heart, Search } from "lucide-react";
 import NavActions from "./NavActions";
+import MobileNav from "./MobileNav";
 import type { ApiCategory } from "@/lib/api";
 import styles from "./Navbar.module.css";
 
@@ -21,23 +22,26 @@ export default function Navbar({ active = "Home", categories = [] }: NavbarProps
   return (
     <header className={styles.header}>
       <div className={`container ${styles.bar}`}>
-        <Link href="/" className={styles.logo}>
-          <span className={styles.logoMark} aria-hidden="true">
-            <Heart size={18} strokeWidth={2.5} />
-          </span>
-          <span className={styles.logoText}>
-            <span className={styles.logoName}>R5atelier</span>
-            <span className={styles.logoTagline}>Made with love</span>
-          </span>
-        </Link>
+        {/* Left: menu button (phones only) + wordmark */}
+        <div className={styles.left}>
+          <MobileNav links={links} categories={categories} active={active} />
 
+          <Link href="/" className={styles.logo}>
+            <span className={styles.logoMark} aria-hidden="true">
+              <Heart size={17} strokeWidth={2.5} />
+            </span>
+            <span className={styles.logoText}>
+              <span className={styles.logoName}>R5atelier</span>
+              <span className={styles.logoTagline}>Made with love</span>
+            </span>
+          </Link>
+        </div>
+
+        {/* Centre: primary navigation */}
         <nav className={styles.nav} aria-label="Primary">
           <ul>
-            <li key="Home">
-              <Link
-                href="/"
-                className={active === "Home" ? styles.active : undefined}
-              >
+            <li>
+              <Link href="/" className={active === "Home" ? styles.active : undefined}>
                 Home
               </Link>
             </li>
@@ -73,10 +77,11 @@ export default function Navbar({ active = "Home", categories = [] }: NavbarProps
           </ul>
         </nav>
 
+        {/* Right: search + account/cart */}
         <div className={styles.actions}>
           <label className={styles.search}>
             <Search size={16} strokeWidth={2} aria-hidden="true" />
-            <input type="search" placeholder="Search handmade happiness..." />
+            <input type="search" placeholder="Search handmade happiness…" />
           </label>
 
           <NavActions />
