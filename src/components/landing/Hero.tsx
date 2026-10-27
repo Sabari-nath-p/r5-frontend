@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight, Gift, Heart, Leaf, Truck } from "lucide-react";
+import InstagramIcon from "../icons/InstagramIcon";
 import DoodleLayer from "../doodles/DoodleLayer";
 import styles from "./Hero.module.css";
 
@@ -30,6 +31,7 @@ export default function Hero() {
   return (
     <section className={styles.hero}>
       <DoodleLayer variant="hero" />
+
       <div className={`container ${styles.grid}`}>
         <div className={styles.copy}>
           <p className={styles.overline}>
@@ -52,9 +54,22 @@ export default function Hero() {
             everyday moments.
           </p>
 
-          <a href="#shop" className={styles.cta}>
-            Shop Now <span aria-hidden="true">→</span>
-          </a>
+          <div className={styles.ctaRow}>
+            <a href="#shop" className={styles.cta}>
+              Shop Now <span aria-hidden="true">→</span>
+            </a>
+
+            <a
+              href="https://www.instagram.com/YOUR_INSTAGRAM_USERNAME/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.instagramCta}
+              aria-label="Follow R5atelier on Instagram"
+            >
+              <InstagramIcon size={19} />
+              Follow on Instagram
+            </a>
+          </div>
 
           <ul className={styles.features}>
             {features.map(({ icon: Icon, label }) => (
@@ -78,9 +93,11 @@ export default function Hero() {
               <span className={`${styles.circle} ${styles.circlePurple}`} />
               <span className={`${styles.circle} ${styles.circleBlush}`} />
               <span className={`${styles.circle} ${styles.circleOutlineSmall}`} />
+
               <span className={`${styles.iconCircle} ${styles.iconCircleHeart}`}>
                 <Heart size={26} strokeWidth={1.6} />
               </span>
+
               <span className={`${styles.iconCircle} ${styles.iconCircleGift}`}>
                 <Gift size={22} strokeWidth={1.6} />
               </span>

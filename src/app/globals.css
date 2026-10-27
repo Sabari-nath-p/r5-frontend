@@ -24,6 +24,14 @@
   --shadow-soft: 0 12px 30px -14px rgba(58, 31, 102, 0.25);
   --shadow-card: 0 8px 24px -12px rgba(58, 31, 102, 0.18);
   --max-width: 1280px;
+
+  /*
+   * Meme fonts, served from the system rather than loaded: Comic Sans for
+   * running text, Impact for display. Each stack names the Windows, macOS and
+   * Linux equivalents before falling back to a generic family.
+   */
+  --font-body: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive;
+  --font-display: Impact, Haettenschweiler, "Franklin Gothic Bold", "Arial Black", sans-serif;
 }
 
 html {

@@ -37,7 +37,7 @@
   font-size: clamp(3.4rem, 6.3vw, 6.3rem);
   font-weight: 700;
   line-height: 0.98;
-  letter-spacing: -0.045em;
+  letter-spacing: 0;
   color: var(--ink);
   margin: 0 0 22px;
 }
@@ -93,6 +93,36 @@
 .cta:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 26px rgba(176, 125, 28, 0.2);
+}
+
+/* The two calls to action sit side by side, wrapping on narrow screens. */
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Outlined sibling of .cta, so the gold button keeps the primary weight. */
+.instagramCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 28px;
+  border: 1px solid var(--purple-600);
+  border-radius: var(--radius-pill);
+  color: var(--purple-600);
+  font-weight: 600;
+  font-size: 0.98rem;
+  background: rgba(255, 255, 255, 0.6);
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.instagramCta:hover {
+  transform: translateY(-3px);
+  background: var(--purple-600);
+  color: #fff;
 }
 
 .features {
@@ -280,7 +310,7 @@
 .messageBadge strong {
   display: block;
   color: var(--purple-600);
-  font-family: Georgia, serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
 }
 
@@ -405,8 +435,15 @@
     margin-right: auto;
   }
 
-  .cta {
-    padding: 15px 28px;
+  .ctaRow {
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .cta,
+  .instagramCta {
+    padding: 14px 24px;
+    font-size: 0.92rem;
   }
 
   .features {
@@ -423,6 +460,7 @@
 @media (prefers-reduced-motion: reduce) {
 
   .cta,
+  .instagramCta,
   .carouselControls button {
     transition: none;
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Heart, Send } from "lucide-react";
+import InstagramIcon from "../icons/InstagramIcon";
 import styles from "./Footer.module.css";
 
 const quickLinks = ["Home", "Shop", "Categories", "Gift Sets", "About Us", "Contact"];
@@ -16,13 +17,7 @@ const careLinks = [
 function SocialIcon({ kind }: { kind: "instagram" | "facebook" | "pinterest" | "youtube" }) {
   switch (kind) {
     case "instagram":
-      return (
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
-          <rect x="3" y="3" width="18" height="18" rx="5" />
-          <circle cx="12" cy="12" r="4.2" />
-          <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
-        </svg>
-      );
+      return <InstagramIcon />;
     case "facebook":
       return (
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">

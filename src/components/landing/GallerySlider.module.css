@@ -1,16 +1,22 @@
 .section {
   position: relative;
-  overflow: hidden;
+  padding: 28px 0;
   background: var(--paper);
 }
 
+/*
+ * The frame keeps its 16:9 shape until the cap takes over on wide screens,
+ * where a true 16:9 would be taller than the viewport. The image is
+ * object-fit: cover, so it fills the shorter frame without distorting.
+ */
 .slide {
   position: relative;
   aspect-ratio: 16 / 9;
   width: 100%;
-  max-width: 1600px;
+  max-height: 440px;
   margin: 0 auto;
   overflow: hidden;
+  border-radius: var(--radius-lg);
 }
 
 .slideLink {
@@ -22,8 +28,8 @@
 .controls {
   position: absolute;
   z-index: 4;
-  right: 30px;
-  bottom: 24px;
+  right: 24px;
+  bottom: 20px;
   display: flex;
   gap: 10px;
 }
@@ -75,8 +81,13 @@
 }
 
 @media (max-width: 700px) {
+  .section {
+    padding: 18px 0;
+  }
+
   .slide {
     aspect-ratio: 16 / 9;
+    border-radius: var(--radius-md);
   }
 
   .controls {
