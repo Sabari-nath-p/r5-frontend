@@ -41,6 +41,8 @@ export type ApiProduct = {
   metaDescription: string | null;
   metaImage: string | null;
   status: ApiProductStatus;
+  /** Hand-picked for the homepage "Featured Products" row. */
+  isFeatured: boolean;
   categoryId: string;
   category: ApiCategory;
   images: ApiProductImage[];

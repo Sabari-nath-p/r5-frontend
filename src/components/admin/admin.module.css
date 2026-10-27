@@ -356,6 +356,13 @@
   color: var(--a-brand);
 }
 
+/* An icon button that is "on" — the featured star, for instance. */
+.iconButtonActive {
+  border-color: var(--a-brand-line);
+  background: var(--a-brand-wash);
+  color: var(--a-brand);
+}
+
 .iconButtonDanger:hover {
   border-color: #eec2c2;
   background: var(--a-crit-wash);

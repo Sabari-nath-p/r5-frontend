@@ -5,12 +5,14 @@
   border-radius: var(--radius-md);
   padding: 10px 10px 12px;
   border: 1px solid var(--line);
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
+/* Hover only changes the border and shadow — the card never moves or resizes,
+   so passing the cursor across a grid doesn't make the row jump. */
 .card:hover {
   box-shadow: var(--shadow-card);
-  transform: translateY(-3px);
+  border-color: var(--purple-100);
 }
 
 /* A landscape crop keeps the card wide and low rather than tall and narrow. */

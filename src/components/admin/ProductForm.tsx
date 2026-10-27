@@ -47,6 +47,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
   const [name, setName] = useState(initialProduct?.name ?? "");
   const [categoryId, setCategoryId] = useState(initialProduct?.categoryId ?? "");
   const [status, setStatus] = useState<ApiProductStatus>(initialProduct?.status ?? "DRAFT");
+  const [isFeatured, setIsFeatured] = useState(initialProduct?.isFeatured ?? false);
   const [metaTitle, setMetaTitle] = useState(initialProduct?.metaTitle ?? "");
   const [metaDescription, setMetaDescription] = useState(initialProduct?.metaDescription ?? "");
   const [metaImage, setMetaImage] = useState(initialProduct?.metaImage ?? "");
@@ -125,6 +126,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
       name,
       categoryId,
       status,
+      isFeatured,
       metaTitle: metaTitle || undefined,
       metaDescription: metaDescription || undefined,
       metaImage: metaImage || undefined,
@@ -426,6 +428,19 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
                 ))}
               </select>
             </div>
+
+            <label className={styles.switchRow}>
+              <span className={styles.switchText}>
+                <strong>Featured product</strong>
+                <span>Shows in the homepage “Featured Products” row.</span>
+              </span>
+              <input
+                type="checkbox"
+                checked={isFeatured}
+                onChange={(e) => setIsFeatured(e.target.checked)}
+                style={{ width: 17, height: 17, accentColor: "var(--a-brand)" }}
+              />
+            </label>
           </div>
         </section>
 

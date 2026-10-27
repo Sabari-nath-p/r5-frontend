@@ -11,12 +11,17 @@ import Footer from "@/components/landing/Footer";
 import { getBanners, getCategories, getGalleryImages, getProducts } from "@/lib/api";
 
 export default async function Home() {
-  const [categories, productList, galleryImages, banners] = await Promise.all([
+  const [categories, featuredList, latestList, galleryImages, banners] = await Promise.all([
     getCategories(),
+    getProducts({ status: "ACTIVE", featured: true, limit: 12 }),
     getProducts({ status: "ACTIVE", limit: 12 }),
     getGalleryImages(),
     getBanners(),
   ]);
+
+  // Admins pick the featured row in /myportal/products; until anything is
+  // flagged, the newest active products stand in so the section is never empty.
+  const featured = featuredList.items.length > 0 ? featuredList.items : latestList.items;
 
   return (
     <>
@@ -26,7 +31,7 @@ export default async function Home() {
         {/* Banner images come from the admin portal (/myportal/banners). */}
         <BannerSlider banners={banners} />
         <Categories categories={categories} />
-        <FeaturedProducts products={productList.items} categories={categories} />
+        <FeaturedProducts products={featured} categories={categories} />
         <GiftBanner />
         <Collections />
         <TrustBadges />

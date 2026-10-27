@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ExternalLink, ImageOff, Package, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { ExternalLink, ImageOff, Package, Pencil, Plus, Search, Star, Trash2 } from "lucide-react";
 import { useAdminAuth } from "@/lib/admin/auth-context";
 import { ApiError, categoriesApi, productsApi } from "@/lib/admin/client";
 import {
@@ -33,6 +33,9 @@ export default function AdminProductsPage() {
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [featuredFilter, setFeaturedFilter] = useState("");
+
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const [pendingDelete, setPendingDelete] = useState<ApiProduct | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -59,6 +62,9 @@ export default function AdminProductsPage() {
     return products
       .filter((product) => !categoryFilter || product.categoryId === categoryFilter)
       .filter((product) => !statusFilter || product.status === statusFilter)
+      .filter((product) =>
+        featuredFilter === "" ? true : product.isFeatured === (featuredFilter === "yes")
+      )
       .filter(
         (product) =>
           !needle ||
@@ -67,7 +73,31 @@ export default function AdminProductsPage() {
             .toLowerCase()
             .includes(needle)
       );
-  }, [products, query, categoryFilter, statusFilter]);
+  }, [products, query, categoryFilter, statusFilter, featuredFilter]);
+
+  /** Flip the homepage "featured" flag straight from the row. */
+  async function toggleFeatured(product: ApiProduct) {
+    setTogglingId(product.id);
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("Session expired. Please sign in again.");
+      const updated = await productsApi.update(token, product.id, {
+        isFeatured: !product.isFeatured,
+      });
+      setProducts((current) =>
+        current.map((item) => (item.id === product.id ? updated : item))
+      );
+      toast.success(
+        updated.isFeatured
+          ? `${updated.name} is now featured.`
+          : `${updated.name} is no longer featured.`
+      );
+    } catch (err) {
+      toast.error(err instanceof ApiError || err instanceof Error ? err.message : "Update failed");
+    } finally {
+      setTogglingId(null);
+    }
+  }
 
   async function confirmDelete() {
     if (!pendingDelete) return;
@@ -135,6 +165,16 @@ export default function AdminProductsPage() {
             <option value="DRAFT">Draft</option>
             <option value="INACTIVE">Inactive</option>
           </select>
+          <select
+            className={styles.select}
+            style={{ width: 160 }}
+            value={featuredFilter}
+            onChange={(e) => setFeaturedFilter(e.target.value)}
+          >
+            <option value="">All products</option>
+            <option value="yes">Featured only</option>
+            <option value="no">Not featured</option>
+          </select>
           <span className={styles.toolbarSpacer} />
           <span className={styles.count}>
             {visible.length} of {products.length}
@@ -165,6 +205,7 @@ export default function AdminProductsPage() {
                   <th>Product</th>
                   <th>Category</th>
                   <th>Status</th>
+                  <th>Featured</th>
                   <th>From</th>
                   <th>Stock</th>
                   <th>Variations</th>
@@ -209,6 +250,26 @@ export default function AdminProductsPage() {
                               ? "Draft"
                               : "Inactive"}
                         </span>
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          className={
+                            product.isFeatured
+                              ? `${styles.iconButton} ${styles.iconButtonActive}`
+                              : styles.iconButton
+                          }
+                          onClick={() => toggleFeatured(product)}
+                          disabled={togglingId === product.id}
+                          aria-pressed={product.isFeatured}
+                          title={
+                            product.isFeatured
+                              ? "Featured on the homepage — click to remove"
+                              : "Feature on the homepage"
+                          }
+                        >
+                          <Star size={14} fill={product.isFeatured ? "currentColor" : "none"} />
+                        </button>
                       </td>
                       <td className={styles.num}>
                         {variation ? `₹${toNumber(variation.price).toLocaleString("en-IN")}` : "—"}

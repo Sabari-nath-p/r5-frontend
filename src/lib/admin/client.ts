@@ -137,16 +137,18 @@ export type ProductInput = {
   metaDescription?: string;
   metaImage?: string;
   status?: ApiProductStatus;
+  isFeatured?: boolean;
   tags?: string[];
   images: ProductImageInput[];
   variations: ProductVariationInput[];
 };
 
 export const productsApi = {
-  list: (params: { page?: number; limit?: number } = {}) => {
+  list: (params: { page?: number; limit?: number; featured?: boolean } = {}) => {
     const qs = new URLSearchParams();
     qs.set("page", String(params.page ?? 1));
     qs.set("limit", String(params.limit ?? 100));
+    if (params.featured !== undefined) qs.set("featured", String(params.featured));
     return request<ApiProductList>(`/products?${qs.toString()}`);
   },
   get: (id: string) => request<ApiProduct>(`/products/${id}`),

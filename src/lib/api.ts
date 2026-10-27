@@ -46,6 +46,7 @@ export async function getProducts(
     tag?: string;
     search?: string;
     status?: ApiProductStatus;
+    featured?: boolean;
     page?: number;
     limit?: number;
   } = {}
@@ -59,6 +60,7 @@ export async function getProducts(
   if (params.tag) qs.set("tag", params.tag);
   if (params.search) qs.set("search", params.search);
   if (params.status) qs.set("status", params.status);
+  if (params.featured !== undefined) qs.set("featured", String(params.featured));
   qs.set("page", String(page));
   qs.set("limit", String(limit));
 
