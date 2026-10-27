@@ -1,0 +1,65 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+  padding: 18px 22px 22px;
+}
+
+.tile {
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-r);
+  overflow: hidden;
+  background: var(--a-surface-2);
+}
+
+.tile img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  background: var(--a-surface-3);
+}
+
+.tileBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 9px;
+  border-top: 1px solid var(--a-line);
+  background: var(--a-surface);
+}
+
+.tileMeta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.tileLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--a-brand);
+}
+
+.tileLink:hover {
+  text-decoration: underline;
+}
+
+.tileActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 14px 16px 18px;
+  }
+}

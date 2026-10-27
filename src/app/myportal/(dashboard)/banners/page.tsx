@@ -1,39 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { GalleryVerticalEnd, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useAdminAuth } from "@/lib/admin/auth-context";
-import { useAdminUpload } from "@/lib/admin/use-upload";
-import { ApiError, bannersApi, type BannerInput } from "@/lib/admin/client";
+import { ApiError, bannersApi } from "@/lib/admin/client";
 import type { ApiBanner } from "@/lib/api-types";
-import ImageUploadField from "@/components/admin/ImageUploadField";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import BannerDialog from "@/components/admin/dialogs/BannerDialog";
+import { EmptyState, TableSkeleton } from "@/components/admin/ListStates";
+import { useToast } from "@/components/admin/Toast";
 import styles from "@/components/admin/admin.module.css";
-
-const emptyForm: BannerInput = {
-  title: "",
-  subtitle: "",
-  image: "",
-  ctaText: "",
-  ctaLink: "",
-  sortOrder: 0,
-  isActive: true,
-};
 
 export default function AdminBannersPage() {
   const { getToken } = useAdminAuth();
-  const onUpload = useAdminUpload("banners");
+  const toast = useToast();
 
   const [banners, setBanners] = useState<ApiBanner[]>([]);
-  const [loadingList, setLoadingList] = useState(true);
-  const [form, setForm] = useState<BannerInput>(emptyForm);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+
+  // null = closed; { banner: null } = add; { banner } = edit.
+  const [dialog, setDialog] = useState<{ banner: ApiBanner | null } | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<ApiBanner | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function load() {
-    setLoadingList(true);
-    setBanners(await bannersApi.list());
-    setLoadingList(false);
+    setLoading(true);
+    try {
+      setBanners(await bannersApi.list());
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -42,61 +39,30 @@ export default function AdminBannersPage() {
     load();
   }, []);
 
-  function startEdit(banner: ApiBanner) {
-    setEditingId(banner.id);
-    setForm({
-      title: banner.title,
-      subtitle: banner.subtitle ?? "",
-      image: banner.image,
-      ctaText: banner.ctaText ?? "",
-      ctaLink: banner.ctaLink ?? "",
-      sortOrder: banner.sortOrder,
-      isActive: banner.isActive,
-    });
-    setError(null);
-  }
+  const visible = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    const sorted = [...banners].sort((a, b) => a.sortOrder - b.sortOrder);
+    if (!needle) return sorted;
+    return sorted.filter((banner) =>
+      [banner.title, banner.subtitle, banner.ctaText].join(" ").toLowerCase().includes(needle)
+    );
+  }, [banners, query]);
 
-  function resetForm() {
-    setEditingId(null);
-    setForm(emptyForm);
-    setError(null);
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-
-    if (!form.image) {
-      setError("An image is required.");
-      return;
-    }
-
-    setSaving(true);
+  async function confirmDelete() {
+    if (!pendingDelete) return;
+    setDeleting(true);
     try {
       const token = await getToken();
       if (!token) throw new Error("Session expired. Please sign in again.");
-
-      if (editingId) {
-        await bannersApi.update(token, editingId, form);
-      } else {
-        await bannersApi.create(token, form);
-      }
-      resetForm();
+      await bannersApi.remove(token, pendingDelete.id);
+      toast.success("Banner deleted.");
+      setPendingDelete(null);
       await load();
     } catch (err) {
-      setError(err instanceof ApiError || err instanceof Error ? err.message : "Save failed");
+      toast.error(err instanceof ApiError || err instanceof Error ? err.message : "Delete failed");
     } finally {
-      setSaving(false);
+      setDeleting(false);
     }
-  }
-
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this banner?")) return;
-    const token = await getToken();
-    if (!token) return;
-    await bannersApi.remove(token, id);
-    if (editingId === id) resetForm();
-    await load();
   }
 
   return (
@@ -104,138 +70,106 @@ export default function AdminBannersPage() {
       <div className={styles.pageHeader}>
         <div>
           <h1 className={styles.title}>Banners</h1>
-          <p className={styles.subtitle}>Promotional slides shown on the homepage.</p>
+          <p className={styles.subtitle}>Promotional slides shown in the homepage hero.</p>
+        </div>
+        <div className={styles.headerActions}>
+          <button type="button" className={styles.button} onClick={() => setDialog({ banner: null })}>
+            <Plus size={15} /> New banner
+          </button>
         </div>
       </div>
 
       <div className={styles.card}>
-        <form className={styles.form} onSubmit={handleSubmit}>
-          {error && <p className={styles.error}>{error}</p>}
-
-          <div className={styles.field}>
-            <label className={styles.label}>Title</label>
+        <div className={styles.toolbar}>
+          <div className={styles.search}>
+            <Search size={15} />
             <input
               className={styles.input}
-              required
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              placeholder="Search banners"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
             />
           </div>
+          <span className={styles.toolbarSpacer} />
+          <span className={styles.count}>
+            {visible.length} of {banners.length}
+          </span>
+        </div>
 
-          <div className={styles.field}>
-            <label className={styles.label}>Subtitle</label>
-            <textarea
-              className={styles.textarea}
-              value={form.subtitle}
-              onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
-            />
-          </div>
-
-          <ImageUploadField
-            label="Image"
-            value={form.image}
-            onChange={(url) => setForm({ ...form, image: url })}
-            onUpload={onUpload}
-          />
-
-          <div className={styles.grid2}>
-            <div className={styles.field}>
-              <label className={styles.label}>Button text</label>
-              <input
-                className={styles.input}
-                value={form.ctaText}
-                onChange={(e) => setForm({ ...form, ctaText: e.target.value })}
-                placeholder="Shop Now"
-              />
-            </div>
-            <div className={styles.field}>
-              <label className={styles.label}>Button link</label>
-              <input
-                className={styles.input}
-                value={form.ctaLink}
-                onChange={(e) => setForm({ ...form, ctaLink: e.target.value })}
-                placeholder="/#shop"
-              />
-            </div>
-          </div>
-
-          <div className={styles.grid2}>
-            <div className={styles.field}>
-              <label className={styles.label}>Sort order</label>
-              <input
-                type="number"
-                className={styles.input}
-                value={form.sortOrder}
-                onChange={(e) => setForm({ ...form, sortOrder: Number(e.target.value) })}
-              />
-            </div>
-            <label className={styles.checkboxRow} style={{ alignSelf: "center", marginTop: 20 }}>
-              <input
-                type="checkbox"
-                checked={form.isActive}
-                onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
-              />
-              Active
-            </label>
-          </div>
-
-          <div className={styles.actions}>
-            <button type="submit" className={styles.button} disabled={saving}>
-              {saving ? "Saving…" : editingId ? "Update banner" : "Add banner"}
-            </button>
-            {editingId && (
-              <button type="button" className={styles.buttonSecondary} onClick={resetForm}>
-                Cancel
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
-
-      <div className={styles.card}>
-        {loadingList ? (
-          <p className={styles.muted}>Loading…</p>
+        {loading ? (
+          <TableSkeleton />
         ) : banners.length === 0 ? (
-          <p className={styles.muted}>No banners yet.</p>
+          <EmptyState
+            icon={<GalleryVerticalEnd size={20} />}
+            title="No banners yet"
+            message="Banners are the rotating slides at the top of the homepage."
+            action={
+              <button
+                type="button"
+                className={styles.button}
+                onClick={() => setDialog({ banner: null })}
+              >
+                <Plus size={15} /> New banner
+              </button>
+            }
+          />
+        ) : visible.length === 0 ? (
+          <EmptyState title="No matches" message={`Nothing matches “${query}”.`} />
         ) : (
           <div className={styles.tableWrap}>
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th></th>
+                  <th style={{ width: 70 }}>Image</th>
                   <th>Title</th>
-                  <th>Active</th>
+                  <th>Button</th>
+                  <th>Status</th>
                   <th>Sort</th>
-                  <th></th>
+                  <th className={styles.colActions} />
                 </tr>
               </thead>
               <tbody>
-                {banners.map((banner) => (
+                {visible.map((banner) => (
                   <tr key={banner.id}>
                     <td>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      {/* eslint-disable-next-line @next/next/no-img-element -- remote host is dynamic (R2) */}
                       <img src={banner.image} alt="" className={styles.thumb} />
                     </td>
-                    <td>{banner.title}</td>
                     <td>
-                      <span className={banner.isActive ? styles.badgePill : styles.badgePillMuted}>
+                      <div className={styles.cellStrong}>{banner.title}</div>
+                      {banner.subtitle && <div className={styles.cellSub}>{banner.subtitle}</div>}
+                    </td>
+                    <td>
+                      {banner.ctaText ? (
+                        <>
+                          <div>{banner.ctaText}</div>
+                          <div className={styles.cellSub}>{banner.ctaLink}</div>
+                        </>
+                      ) : (
+                        <span className={styles.muted}>—</span>
+                      )}
+                    </td>
+                    <td>
+                      <span className={banner.isActive ? styles.badgeGood : styles.badgeMuted}>
                         {banner.isActive ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td>{banner.sortOrder}</td>
-                    <td>
+                    <td className={styles.num}>{banner.sortOrder}</td>
+                    <td className={styles.colActions}>
                       <div className={styles.rowActions}>
                         <button
                           type="button"
-                          className={styles.buttonSecondary}
-                          onClick={() => startEdit(banner)}
+                          className={styles.iconButton}
+                          onClick={() => setDialog({ banner })}
+                          aria-label={`Edit ${banner.title}`}
                         >
                           <Pencil size={14} />
                         </button>
                         <button
                           type="button"
-                          className={styles.buttonDanger}
-                          onClick={() => handleDelete(banner.id)}
+                          className={`${styles.iconButton} ${styles.iconButtonDanger}`}
+                          onClick={() => setPendingDelete(banner)}
+                          aria-label={`Delete ${banner.title}`}
                         >
                           <Trash2 size={14} />
                         </button>
@@ -248,6 +182,31 @@ export default function AdminBannersPage() {
           </div>
         )}
       </div>
+
+      {dialog && (
+        <BannerDialog
+          banner={dialog.banner}
+          onClose={() => setDialog(null)}
+          onSaved={() => {
+            setDialog(null);
+            void load();
+          }}
+        />
+      )}
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Delete banner"
+        message={
+          <>
+            <strong>{pendingDelete?.title}</strong> will be removed from the homepage. This cannot
+            be undone.
+          </>
+        }
+        busy={deleting}
+        onConfirm={confirmDelete}
+        onClose={() => setPendingDelete(null)}
+      />
     </div>
   );
 }

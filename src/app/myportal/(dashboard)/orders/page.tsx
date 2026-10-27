@@ -1,16 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { AlertCircle, Search, ShoppingBag, SlidersHorizontal } from "lucide-react";
 import { useAdminAuth } from "@/lib/admin/auth-context";
-import { ApiError, ordersApi, type OrderUpdateInput } from "@/lib/admin/client";
+import { ApiError, ordersApi } from "@/lib/admin/client";
 import {
   ORDER_STATUS_LABELS,
   toNumber,
   type ApiOrder,
   type ApiOrderStatus,
 } from "@/lib/api-types";
+import OrderDialog from "@/components/admin/dialogs/OrderDialog";
+import { EmptyState, TableSkeleton } from "@/components/admin/ListStates";
 import styles from "@/components/admin/admin.module.css";
-import local from "./page.module.css";
 
 const STATUSES: ApiOrderStatus[] = [
   "PENDING",
@@ -21,15 +23,13 @@ const STATUSES: ApiOrderStatus[] = [
   "CANCELLED",
 ];
 
-/** Mirrors the transitions the API enforces, so the UI only offers valid moves. */
-const NEXT_STATUSES: Record<ApiOrderStatus, ApiOrderStatus[]> = {
-  PENDING: ["CONFIRMED", "CANCELLED"],
-  CONFIRMED: ["PACKING", "CANCELLED"],
-  PACKING: ["SHIPPED", "CANCELLED"],
-  SHIPPED: ["DELIVERED", "CANCELLED"],
-  DELIVERED: [],
-  CANCELLED: [],
-};
+/** Pipeline stages read as neutral brand chips; only the two end states get a tone. */
+function statusClass(status: ApiOrderStatus) {
+  if (status === "DELIVERED") return styles.badgeGood;
+  if (status === "CANCELLED") return styles.badgeCrit;
+  if (status === "PENDING") return styles.badgeWarn;
+  return styles.badge;
+}
 
 export default function AdminOrdersPage() {
   const { getToken } = useAdminAuth();
@@ -38,8 +38,7 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"" | ApiOrderStatus>("");
-  const [expanded, setExpanded] = useState<string | null>(null);
-  const [savingId, setSavingId] = useState<string | null>(null);
+  const [active, setActive] = useState<ApiOrder | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -49,6 +48,7 @@ export default function AdminOrdersPage() {
     setLoading(true);
     try {
       const result = await ordersApi.list(token, {
+        limit: 100,
         search: search || undefined,
         status: statusFilter || undefined,
       });
@@ -67,20 +67,9 @@ export default function AdminOrdersPage() {
     void load();
   }, [load]);
 
-  async function save(id: string, dto: OrderUpdateInput) {
-    const token = await getToken();
-    if (!token) return;
-
-    setSavingId(id);
-    setError(null);
-    try {
-      const updated = await ordersApi.update(token, id, dto);
-      setOrders((current) => current.map((o) => (o.id === id ? updated : o)));
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Could not update the order.");
-    } finally {
-      setSavingId(null);
-    }
+  function applyUpdate(updated: ApiOrder) {
+    setOrders((current) => current.map((order) => (order.id === updated.id ? updated : order)));
+    setActive(updated);
   }
 
   return (
@@ -94,34 +83,53 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {error && <p className={local.error}>{error}</p>}
+      {error && (
+        <p className={styles.error} style={{ marginBottom: 16 }}>
+          <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
+          {error}
+        </p>
+      )}
 
       <div className={styles.card}>
-        <div className={local.filters}>
-          <input
-            className={styles.input}
-            placeholder="Search order number, name or email"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div className={styles.toolbar}>
+          <div className={styles.search}>
+            <Search size={15} />
+            <input
+              className={styles.input}
+              placeholder="Search order number, name or email"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
           <select
             className={styles.select}
+            style={{ width: 170 }}
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as "" | ApiOrderStatus)}
           >
             <option value="">All statuses</option>
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {ORDER_STATUS_LABELS[s]}
+            {STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {ORDER_STATUS_LABELS[status]}
               </option>
             ))}
           </select>
+          <span className={styles.toolbarSpacer} />
+          <span className={styles.count}>{orders.length} shown</span>
         </div>
 
         {loading ? (
-          <p className={styles.muted}>Loading orders…</p>
+          <TableSkeleton rows={6} />
         ) : orders.length === 0 ? (
-          <p className={styles.muted}>No orders match.</p>
+          <EmptyState
+            icon={search || statusFilter ? <SlidersHorizontal size={20} /> : <ShoppingBag size={20} />}
+            title={search || statusFilter ? "No orders match" : "No orders yet"}
+            message={
+              search || statusFilter
+                ? "Clear the search or pick another status."
+                : "Orders placed on the storefront land here."
+            }
+          />
         ) : (
           <div className={styles.tableWrap}>
             <table className={styles.table}>
@@ -129,164 +137,83 @@ export default function AdminOrdersPage() {
                 <tr>
                   <th>Order</th>
                   <th>Customer</th>
+                  <th>Items</th>
                   <th>Total</th>
                   <th>Payment</th>
                   <th>Status</th>
-                  <th />
+                  <th className={styles.colActions} />
                 </tr>
               </thead>
               <tbody>
                 {orders.map((order) => (
-                  <OrderRow
-                    key={order.id}
-                    order={order}
-                    expanded={expanded === order.id}
-                    saving={savingId === order.id}
-                    onToggle={() => setExpanded(expanded === order.id ? null : order.id)}
-                    onSave={(dto) => save(order.id, dto)}
-                  />
+                  <tr key={order.id}>
+                    <td>
+                      <div className={`${styles.cellStrong} ${styles.mono}`}>
+                        {order.orderNumber}
+                      </div>
+                      <div className={styles.cellSub}>
+                        {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.cellStrong}>{order.customerName}</div>
+                      <div className={styles.cellSub}>{order.customerEmail}</div>
+                    </td>
+                    <td className={styles.num}>{order.items.length}</td>
+                    <td className={`${styles.num} ${styles.cellStrong}`}>
+                      ₹{toNumber(order.total).toLocaleString("en-IN")}
+                    </td>
+                    <td>
+                      <div>{order.paymentMethod === "COD" ? "COD" : "Online"}</div>
+                      <div className={styles.cellSub}>
+                        <span
+                          className={
+                            order.paymentStatus === "PAID"
+                              ? styles.badgeGood
+                              : order.paymentStatus === "FAILED"
+                                ? styles.badgeCrit
+                                : styles.badgeMuted
+                          }
+                        >
+                          {order.paymentStatus}
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={statusClass(order.status)}>
+                        {ORDER_STATUS_LABELS[order.status]}
+                      </span>
+                    </td>
+                    <td className={styles.colActions}>
+                      <div className={styles.rowActions}>
+                        <button
+                          type="button"
+                          className={`${styles.buttonSecondary} ${styles.buttonSmall}`}
+                          onClick={() => setActive(order)}
+                        >
+                          Manage
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
       </div>
-    </div>
-  );
-}
 
-function OrderRow({
-  order,
-  expanded,
-  saving,
-  onToggle,
-  onSave,
-}: {
-  order: ApiOrder;
-  expanded: boolean;
-  saving: boolean;
-  onToggle: () => void;
-  onSave: (dto: OrderUpdateInput) => void;
-}) {
-  const [partner, setPartner] = useState(order.deliveryPartner ?? "");
-  const [tracking, setTracking] = useState(order.trackingUrl ?? "");
-
-  const moves = NEXT_STATUSES[order.status];
-
-  return (
-    <>
-      <tr>
-        <td>
-          <strong>{order.orderNumber}</strong>
-          <div className={styles.muted}>
-            {new Date(order.createdAt).toLocaleDateString("en-IN")}
-          </div>
-        </td>
-        <td>
-          {order.customerName}
-          <div className={styles.muted}>{order.customerEmail}</div>
-        </td>
-        <td>₹{toNumber(order.total).toFixed(2)}</td>
-        <td>
-          {order.paymentMethod === "COD" ? "COD" : "Online"}
-          <div className={styles.muted}>{order.paymentStatus}</div>
-        </td>
-        <td>
-          <span className={styles.badgePill}>{ORDER_STATUS_LABELS[order.status]}</span>
-        </td>
-        <td>
-          <button type="button" className={styles.button} onClick={onToggle}>
-            {expanded ? "Close" : "Manage"}
-          </button>
-        </td>
-      </tr>
-
-      {expanded && (
-        <tr>
-          <td colSpan={6}>
-            <div className={local.panel}>
-              <div className={local.panelCol}>
-                <h4>Items</h4>
-                <ul className={local.items}>
-                  {order.items.map((item) => (
-                    <li key={item.id}>
-                      {item.productName} — {item.variationName} × {item.quantity}
-                      <span>₹{toNumber(item.lineTotal).toFixed(2)}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <h4>Ship to</h4>
-                <address className={local.address}>
-                  {order.addressLine1}
-                  {order.addressLine2 ? `, ${order.addressLine2}` : ""}
-                  <br />
-                  {order.city}, {order.state} {order.zipcode}, {order.country}
-                  <br />
-                  {order.countryCode} {order.phone}
-                </address>
-                {order.notes && <p className={styles.muted}>Notes: {order.notes}</p>}
-              </div>
-
-              <div className={local.panelCol}>
-                <h4>Delivery tracking</h4>
-                <div className={styles.field}>
-                  <label className={styles.label}>Delivery partner</label>
-                  <input
-                    className={styles.input}
-                    placeholder="Delhivery, BlueDart…"
-                    value={partner}
-                    onChange={(e) => setPartner(e.target.value)}
-                  />
-                </div>
-                <div className={styles.field}>
-                  <label className={styles.label}>Tracking URL</label>
-                  <input
-                    className={styles.input}
-                    placeholder="https://…"
-                    value={tracking}
-                    onChange={(e) => setTracking(e.target.value)}
-                  />
-                </div>
-                <button
-                  type="button"
-                  className={styles.button}
-                  disabled={saving}
-                  onClick={() =>
-                    onSave({
-                      deliveryPartner: partner,
-                      ...(tracking ? { trackingUrl: tracking } : {}),
-                    })
-                  }
-                >
-                  {saving ? "Saving…" : "Save tracking"}
-                </button>
-
-                <h4 className={local.spaced}>Move to</h4>
-                {moves.length === 0 ? (
-                  <p className={styles.muted}>
-                    This order has reached a final state.
-                  </p>
-                ) : (
-                  <div className={styles.actions}>
-                    {moves.map((next) => (
-                      <button
-                        key={next}
-                        type="button"
-                        className={styles.button}
-                        disabled={saving}
-                        onClick={() => onSave({ status: next })}
-                      >
-                        {ORDER_STATUS_LABELS[next]}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </td>
-        </tr>
+      {active && (
+        <OrderDialog
+          order={active}
+          onClose={() => setActive(null)}
+          onUpdated={applyUpdate}
+        />
       )}
-    </>
+    </div>
   );
 }

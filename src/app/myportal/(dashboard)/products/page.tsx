@@ -1,37 +1,89 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Plus, Trash2 } from "lucide-react";
+import { ExternalLink, ImageOff, Package, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useAdminAuth } from "@/lib/admin/auth-context";
-import { productsApi } from "@/lib/admin/client";
-import { cheapestVariation, sortedImages, toNumber, type ApiProduct } from "@/lib/api-types";
+import { ApiError, categoriesApi, productsApi } from "@/lib/admin/client";
+import {
+  cheapestVariation,
+  sortedImages,
+  toNumber,
+  type ApiCategory,
+  type ApiProduct,
+} from "@/lib/api-types";
+import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import { EmptyState, TableSkeleton } from "@/components/admin/ListStates";
+import { useToast } from "@/components/admin/Toast";
 import styles from "@/components/admin/admin.module.css";
+
+const LOW_STOCK = 3;
+
+function totalStock(product: ApiProduct) {
+  return product.variations.reduce((sum, variation) => sum + variation.stock, 0);
+}
 
 export default function AdminProductsPage() {
   const { getToken } = useAdminAuth();
+  const toast = useToast();
+
   const [products, setProducts] = useState<ApiProduct[]>([]);
+  const [categories, setCategories] = useState<ApiCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  const [pendingDelete, setPendingDelete] = useState<ApiProduct | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function load() {
     setLoading(true);
-    const result = await productsApi.list({ limit: 100 });
-    setProducts(result.items);
-    setLoading(false);
+    try {
+      const result = await productsApi.list({ limit: 200 });
+      setProducts(result.items);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
     // Initial data load on mount, not a derived-state sync.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
+    categoriesApi.list().then(setCategories);
   }, []);
 
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this product? This cannot be undone.")) return;
-    const token = await getToken();
-    if (!token) return;
-    await productsApi.remove(token, id);
-    await load();
+  const visible = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    return products
+      .filter((product) => !categoryFilter || product.categoryId === categoryFilter)
+      .filter((product) => !statusFilter || product.status === statusFilter)
+      .filter(
+        (product) =>
+          !needle ||
+          [product.name, product.slug, product.category.name]
+            .join(" ")
+            .toLowerCase()
+            .includes(needle)
+      );
+  }, [products, query, categoryFilter, statusFilter]);
+
+  async function confirmDelete() {
+    if (!pendingDelete) return;
+    setDeleting(true);
+    try {
+      const token = await getToken();
+      if (!token) throw new Error("Session expired. Please sign in again.");
+      await productsApi.remove(token, pendingDelete.id);
+      toast.success("Product deleted.");
+      setPendingDelete(null);
+      await load();
+    } catch (err) {
+      toast.error(err instanceof ApiError || err instanceof Error ? err.message : "Delete failed");
+    } finally {
+      setDeleting(false);
+    }
   }
 
   return (
@@ -41,64 +93,159 @@ export default function AdminProductsPage() {
           <h1 className={styles.title}>Products</h1>
           <p className={styles.subtitle}>Catalog, pricing, variations and stock.</p>
         </div>
-        <Link href="/myportal/products/new" className={styles.button}>
-          <Plus size={14} /> New product
-        </Link>
+        <div className={styles.headerActions}>
+          <Link href="/myportal/products/new" className={styles.button}>
+            <Plus size={15} /> New product
+          </Link>
+        </div>
       </div>
 
       <div className={styles.card}>
+        <div className={styles.toolbar}>
+          <div className={styles.search}>
+            <Search size={15} />
+            <input
+              className={styles.input}
+              placeholder="Search by name or slug"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
+          <select
+            className={styles.select}
+            style={{ width: 180 }}
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+          >
+            <option value="">All categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className={styles.select}
+            style={{ width: 150 }}
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">All statuses</option>
+            <option value="ACTIVE">Active</option>
+            <option value="DRAFT">Draft</option>
+            <option value="INACTIVE">Inactive</option>
+          </select>
+          <span className={styles.toolbarSpacer} />
+          <span className={styles.count}>
+            {visible.length} of {products.length}
+          </span>
+        </div>
+
         {loading ? (
-          <p className={styles.muted}>Loading…</p>
+          <TableSkeleton rows={6} />
         ) : products.length === 0 ? (
-          <p className={styles.muted}>No products yet.</p>
+          <EmptyState
+            icon={<Package size={20} />}
+            title="No products yet"
+            message="Add your first product with its images, variations and stock."
+            action={
+              <Link href="/myportal/products/new" className={styles.button}>
+                <Plus size={15} /> New product
+              </Link>
+            }
+          />
+        ) : visible.length === 0 ? (
+          <EmptyState title="No matches" message="Try a different search or filter." />
         ) : (
           <div className={styles.tableWrap}>
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th></th>
-                  <th>Name</th>
+                  <th style={{ width: 70 }}>Image</th>
+                  <th>Product</th>
                   <th>Category</th>
                   <th>Status</th>
-                  <th>Price</th>
-                  <th></th>
+                  <th>From</th>
+                  <th>Stock</th>
+                  <th>Variations</th>
+                  <th className={styles.colActions} />
                 </tr>
               </thead>
               <tbody>
-                {products.map((product) => {
+                {visible.map((product) => {
                   const image = sortedImages(product.images)[0];
                   const variation = cheapestVariation(product.variations);
+                  const stock = totalStock(product);
                   return (
                     <tr key={product.id}>
                       <td>
                         {image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
+                          // eslint-disable-next-line @next/next/no-img-element -- remote host is dynamic (R2)
                           <img src={image.url} alt="" className={styles.thumb} />
                         ) : (
-                          <span className={styles.muted}>—</span>
+                          <span className={`${styles.thumb} ${styles.thumbEmpty}`}>
+                            <ImageOff size={15} />
+                          </span>
                         )}
                       </td>
-                      <td>{product.name}</td>
+                      <td>
+                        <div className={styles.cellStrong}>{product.name}</div>
+                        <div className={styles.cellSub}>/{product.slug}</div>
+                      </td>
                       <td>{product.category.name}</td>
                       <td>
                         <span
                           className={
-                            product.status === "ACTIVE" ? styles.badgePill : styles.badgePillMuted
+                            product.status === "ACTIVE"
+                              ? styles.badgeGood
+                              : product.status === "DRAFT"
+                                ? styles.badgeWarn
+                                : styles.badgeMuted
                           }
                         >
-                          {product.status}
+                          {product.status === "ACTIVE"
+                            ? "Active"
+                            : product.status === "DRAFT"
+                              ? "Draft"
+                              : "Inactive"}
                         </span>
                       </td>
-                      <td>{variation ? `₹${toNumber(variation.price)}` : "—"}</td>
-                      <td>
+                      <td className={styles.num}>
+                        {variation ? `₹${toNumber(variation.price).toLocaleString("en-IN")}` : "—"}
+                      </td>
+                      <td className={styles.num}>
+                        {stock === 0 ? (
+                          <span className={styles.badgeCrit}>Out of stock</span>
+                        ) : stock <= LOW_STOCK ? (
+                          <span className={styles.badgeWarn}>{stock} left</span>
+                        ) : (
+                          stock
+                        )}
+                      </td>
+                      <td className={styles.num}>{product.variations.length}</td>
+                      <td className={styles.colActions}>
                         <div className={styles.rowActions}>
-                          <Link href={`/myportal/products/${product.id}`} className={styles.buttonSecondary}>
-                            Edit
+                          <a
+                            href={`/product/${product.slug}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={styles.iconButton}
+                            aria-label={`View ${product.name} on the storefront`}
+                          >
+                            <ExternalLink size={14} />
+                          </a>
+                          <Link
+                            href={`/myportal/products/${product.id}`}
+                            className={styles.iconButton}
+                            aria-label={`Edit ${product.name}`}
+                          >
+                            <Pencil size={14} />
                           </Link>
                           <button
                             type="button"
-                            className={styles.buttonDanger}
-                            onClick={() => handleDelete(product.id)}
+                            className={`${styles.iconButton} ${styles.iconButtonDanger}`}
+                            onClick={() => setPendingDelete(product)}
+                            aria-label={`Delete ${product.name}`}
                           >
                             <Trash2 size={14} />
                           </button>
@@ -112,6 +259,20 @@ export default function AdminProductsPage() {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Delete product"
+        message={
+          <>
+            <strong>{pendingDelete?.name}</strong> and all of its variations will be deleted. This
+            cannot be undone.
+          </>
+        }
+        busy={deleting}
+        onConfirm={confirmDelete}
+        onClose={() => setPendingDelete(null)}
+      />
     </div>
   );
 }

@@ -54,4 +54,8 @@
   .deco {
     display: none;
   }
+
+  .section {
+    padding: 24px 0;
+  }
 }

@@ -1,5 +1,6 @@
 import { cacheLife } from "next/cache";
 import type {
+  ApiBanner,
   ApiCategory,
   ApiGalleryImage,
   ApiProduct,
@@ -80,4 +81,14 @@ export async function getGalleryImages(): Promise<ApiGalleryImage[]> {
   "use cache";
   cacheLife("minutes");
   return apiFetch<ApiGalleryImage[]>("/gallery", []);
+}
+
+/** Homepage banners, newest-first by sort order and filtered to the live ones. */
+export async function getBanners(): Promise<ApiBanner[]> {
+  "use cache";
+  cacheLife("minutes");
+  const banners = await apiFetch<ApiBanner[]>("/banners", []);
+  return banners
+    .filter((banner) => banner.isActive)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 }

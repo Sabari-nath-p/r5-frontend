@@ -1,0 +1,208 @@
+/*
+ * Dashboard chart primitives. One validated series hue (--a-series, 5.05:1 on
+ * white) carries every mark — these are all single-series charts, so colour
+ * never has to encode identity and no legend is needed.
+ */
+
+.chart {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 10px;
+}
+
+.axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 0.68rem;
+  color: var(--a-ink-3);
+  font-variant-numeric: tabular-nums;
+  padding-bottom: 20px;
+}
+
+.plot {
+  position: relative;
+  min-width: 0;
+}
+
+.grid {
+  position: absolute;
+  inset: 0 0 20px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.gridLine {
+  border-top: 1px solid var(--a-grid);
+}
+
+.gridLine:last-child {
+  border-top-color: var(--a-axis);
+}
+
+.bars {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 180px;
+  padding-bottom: 20px;
+}
+
+.barSlot {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  cursor: default;
+}
+
+.bar {
+  width: 100%;
+  min-height: 2px;
+  background: var(--a-series);
+  border-radius: 4px 4px 0 0;
+  transition: background 0.12s ease;
+}
+
+.barZero {
+  background: var(--a-grid);
+}
+
+.barSlot:hover .bar {
+  background: var(--a-brand-strong);
+}
+
+.barLabel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.64rem;
+  color: var(--a-ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Peak value is labelled directly; every other value lives in the tooltip. */
+.peak {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -4px);
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--a-ink-2);
+  white-space: nowrap;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: var(--a-ink);
+  color: #fff;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  padding: 6px 9px;
+  border-radius: 7px;
+  white-space: nowrap;
+  box-shadow: var(--a-shadow-2);
+  pointer-events: none;
+}
+
+.tooltip strong {
+  display: block;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltip span {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* ---- Horizontal stage bars ---- */
+
+.stages {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: 86px 1fr 46px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+}
+
+.stageLabel {
+  color: var(--a-ink-2);
+  font-weight: 500;
+}
+
+.stageTrack {
+  height: 9px;
+  border-radius: 5px;
+  background: var(--a-surface-3);
+  overflow: hidden;
+}
+
+.stageFill {
+  height: 100%;
+  border-radius: 5px;
+  background: var(--a-series);
+  min-width: 2px;
+}
+
+.stageValue {
+  text-align: right;
+  font-weight: 650;
+  color: var(--a-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Sparkline ---- */
+
+.spark {
+  width: 100%;
+  height: 34px;
+  display: block;
+  overflow: visible;
+}
+
+/* A screen-reader-only table backs every chart, so the values are never
+   available through the picture alone. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .chart {
+    grid-template-columns: 42px 1fr;
+  }
+
+  .bars {
+    height: 150px;
+  }
+
+  .stage {
+    grid-template-columns: 76px 1fr 40px;
+  }
+}

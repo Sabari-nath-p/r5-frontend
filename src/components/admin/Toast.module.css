@@ -1,0 +1,91 @@
+.stack {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 13px;
+  min-width: 260px;
+  max-width: 380px;
+  border-radius: var(--a-r);
+  background: var(--a-surface);
+  border: 1px solid var(--a-line);
+  box-shadow: var(--a-shadow-2);
+  font-size: 0.84rem;
+  font-weight: 500;
+  pointer-events: auto;
+  animation: slide 0.18s ease;
+}
+
+.toast span {
+  flex: 1;
+  line-height: 1.45;
+}
+
+.toast button {
+  border: none;
+  background: transparent;
+  color: var(--a-ink-3);
+  display: flex;
+  padding: 2px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.toast button:hover {
+  background: var(--a-surface-3);
+  color: var(--a-ink);
+}
+
+.success {
+  border-left: 3px solid var(--a-good);
+  color: var(--a-ink);
+}
+
+.success > svg {
+  color: var(--a-good-ink);
+}
+
+.error {
+  border-left: 3px solid var(--a-crit);
+  color: var(--a-ink);
+}
+
+.error > svg {
+  color: var(--a-crit-ink);
+}
+
+@keyframes slide {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .stack {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .toast {
+    min-width: 0;
+    max-width: none;
+  }
+}

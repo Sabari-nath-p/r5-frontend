@@ -11,6 +11,7 @@ import type {
   ApiProduct,
   ApiProductList,
   ApiProductStatus,
+  ApiRole,
   ApiStatus,
   ApiTag,
 } from "@/lib/api-types";
@@ -181,4 +182,19 @@ export const ordersApi = {
   },
   update: (token: string, id: string, dto: OrderUpdateInput) =>
     request<ApiOrder>(`/orders/${id}`, { method: "PATCH", body: JSON.stringify(dto) }, token),
+};
+
+// ---- Users ----
+
+export type ApiAdminUser = {
+  id: string;
+  email: string;
+  name: string | null;
+  role: ApiRole;
+  isVerified: boolean;
+  createdAt: string;
+};
+
+export const usersApi = {
+  list: (token: string) => request<ApiAdminUser[]>("/users", {}, token),
 };

@@ -54,10 +54,11 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className={styles.wrap}>
+    <div className={styles.wrap} data-admin-portal>
       <div className={styles.card}>
         <p className={styles.brand}>
-          R5atelier <span>Admin</span>
+          <span className={styles.brandMark}>R5</span>
+          R5atelier <strong>Admin</strong>
         </p>
         <p className={styles.subtitle}>
           {step === "email" ? "Sign in with your email" : `Enter the OTP sent to ${email}`}

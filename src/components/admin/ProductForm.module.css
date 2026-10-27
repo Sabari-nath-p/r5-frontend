@@ -1,0 +1,84 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  align-items: start;
+  padding-bottom: 80px;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.main,
+.side {
+  min-width: 0;
+}
+
+.side {
+  position: sticky;
+  top: 70px;
+}
+
+.variationGrid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 0.8fr 1fr;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.tagAdd {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+/* Save/cancel ride along the bottom of the viewport, so a long form never
+   hides its own actions. */
+.actionBar {
+  position: fixed;
+  bottom: 0;
+  left: 236px;
+  right: 0;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 30px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--a-line);
+}
+
+@media (max-width: 1080px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .side {
+    position: static;
+  }
+
+  .variationGrid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+}
+
+@media (max-width: 1000px) {
+  .actionBar {
+    left: 0;
+    padding: 11px 16px;
+  }
+}
+
+@media (max-width: 620px) {
+  .actionBar > span {
+    display: none;
+  }
+
+  .actionBar {
+    justify-content: flex-end;
+  }
+}

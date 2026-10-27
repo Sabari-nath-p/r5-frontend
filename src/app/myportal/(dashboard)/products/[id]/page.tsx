@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
+import { AlertCircle, ChevronLeft, ExternalLink } from "lucide-react";
 import ProductForm from "@/components/admin/ProductForm";
+import { TableSkeleton } from "@/components/admin/ListStates";
 import { productsApi } from "@/lib/admin/client";
 import type { ApiProduct } from "@/lib/api-types";
 import styles from "@/components/admin/admin.module.css";
@@ -23,15 +26,41 @@ export default function EditProductPage() {
     <div className={styles.page}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.title}>Edit product</h1>
-          <p className={styles.subtitle}>{product?.name ?? " "}</p>
+          <Link
+            href="/myportal/products"
+            className={styles.hint}
+            style={{ display: "inline-flex", alignItems: "center", gap: 4, marginBottom: 6 }}
+          >
+            <ChevronLeft size={13} /> Products
+          </Link>
+          <h1 className={styles.title}>{product?.name ?? "Edit product"}</h1>
+          <p className={styles.subtitle}>
+            {product ? `/${product.slug}` : "Loading the product…"}
+          </p>
         </div>
+        {product && (
+          <div className={styles.headerActions}>
+            <a
+              href={`/product/${product.slug}`}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.buttonSecondary}
+            >
+              <ExternalLink size={14} /> View on storefront
+            </a>
+          </div>
+        )}
       </div>
 
       {notFound ? (
-        <p className={styles.error}>Product not found.</p>
+        <p className={styles.error}>
+          <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
+          Product not found. It may have been deleted.
+        </p>
       ) : !product ? (
-        <p className={styles.muted}>Loading…</p>
+        <div className={styles.card}>
+          <TableSkeleton rows={6} />
+        </div>
       ) : (
         <ProductForm initialProduct={product} />
       )}
