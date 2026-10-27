@@ -193,19 +193,42 @@
 
 @media (max-width: 640px) {
   .card {
-    padding: 8px 8px 10px;
+    padding: 6px 6px 8px;
+    border-radius: var(--radius-sm);
+  }
+
+  .imageWrap {
+    margin-bottom: 7px;
+    border-radius: var(--radius-sm);
   }
 
   .name {
-    font-size: 0.9rem;
+    font-size: 0.84rem;
+    margin-bottom: 3px;
   }
 
   .category {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
+    margin-bottom: 2px;
+  }
+
+  .priceRow {
+    gap: 5px;
+    margin-bottom: 7px;
+  }
+
+  .price {
+    font-size: 0.92rem;
+  }
+
+  .originalPrice {
+    font-size: 0.74rem;
   }
 
   .viewBtn {
     display: flex;
+    padding: 8px;
+    font-size: 0.8rem;
   }
 
   .actions {

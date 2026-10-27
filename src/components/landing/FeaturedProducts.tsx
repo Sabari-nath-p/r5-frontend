@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import ProductCard from "../ProductCard";
 import DoodleLayer from "../doodles/DoodleLayer";
@@ -51,9 +52,9 @@ export default function FeaturedProducts({
             ))}
           </div>
 
-          <a href="#" className={styles.link}>
+          <Link href="/shop" className={styles.link}>
             View All <ArrowRight size={15} />
-          </a>
+          </Link>
         </div>
 
         {visible.length === 0 ? (

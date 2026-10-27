@@ -6,6 +6,7 @@ import type {
   ApiProduct,
   ApiProductList,
   ApiProductStatus,
+  ApiTag,
 } from "./api-types";
 
 export * from "./api-types";
@@ -93,4 +94,11 @@ export async function getBanners(): Promise<ApiBanner[]> {
   return banners
     .filter((banner) => banner.isActive)
     .sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+/** Tag list, used as filter chips on the shop page. */
+export async function getTags(): Promise<ApiTag[]> {
+  "use cache";
+  cacheLife("minutes");
+  return apiFetch<ApiTag[]>("/tags", []);
 }

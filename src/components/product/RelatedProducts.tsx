@@ -13,7 +13,7 @@ export default function RelatedProducts({ products }: { products: ApiProduct[] }
         <h2 className={`display ${styles.heading}`}>
           You May <span>Also Like</span>
         </h2>
-        <Link href="/#shop" className={styles.link}>
+        <Link href="/shop" className={styles.link}>
           View All <ArrowRight size={15} />
         </Link>
       </div>

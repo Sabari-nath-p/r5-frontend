@@ -116,15 +116,21 @@
   }
 }
 
-/* Phones: three small tiles per row rather than two oversized ones. */
+/* Phones: small tiles, four to a row. */
 @media (max-width: 560px) {
   .grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px 10px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px 8px;
+  }
+
+  .imageWrap {
+    margin-bottom: 7px;
+    border-radius: var(--radius-sm);
   }
 
   .card h3 {
-    font-size: 0.78rem;
+    font-size: 0.7rem;
+    line-height: 1.25;
   }
 
   .card p {
@@ -132,16 +138,21 @@
   }
 
   .arrow {
-    right: 5px;
-    bottom: -10px;
-    width: 24px;
-    height: 24px;
+    right: 3px;
+    bottom: -8px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .arrow svg {
+    width: 11px;
+    height: 11px;
   }
 }
 
 @media (max-width: 380px) {
   .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

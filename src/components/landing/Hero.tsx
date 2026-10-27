@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ChevronLeft, ChevronRight, Gift, Heart, Leaf, Truck } from "lucide-react";
 import InstagramIcon from "../icons/InstagramIcon";
 import DoodleLayer from "../doodles/DoodleLayer";
@@ -55,9 +56,9 @@ export default function Hero() {
           </p>
 
           <div className={styles.ctaRow}>
-            <a href="#shop" className={styles.cta}>
+            <Link href="/shop" className={styles.cta}>
               Shop Now <span aria-hidden="true">→</span>
-            </a>
+            </Link>
 
             <a
               href="https://www.instagram.com/r5atelier/"

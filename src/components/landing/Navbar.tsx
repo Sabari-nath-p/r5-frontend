@@ -7,7 +7,7 @@ import styles from "./Navbar.module.css";
 
 const links = [
   { label: "Home", href: "/" },
-  { label: "Shop", href: "/#shop" },
+  { label: "Shop", href: "/shop" },
   { label: "Gift Sets", href: "/#gift-sets" },
   { label: "About", href: "/#about" },
   { label: "Contact", href: "/#contact" },

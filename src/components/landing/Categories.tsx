@@ -18,9 +18,9 @@ export default function Categories({ categories }: { categories: ApiCategory[] }
           <h2 className={`display ${styles.heading}`}>
             Shop by <span>Category</span>
           </h2>
-          <a href="#" className={styles.link}>
+          <Link href="/shop" className={styles.link}>
             View All Categories <ArrowRight size={15} />
-          </a>
+          </Link>
         </div>
 
         <div className={styles.grid}>
