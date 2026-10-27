@@ -1,0 +1,212 @@
+/* Shared shell for the cart, checkout, login and account pages. */
+
+.page {
+  flex: 1;
+  padding: 40px 0 72px;
+  background: var(--cream);
+}
+
+.head {
+  margin-bottom: 28px;
+}
+
+.title {
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.title span {
+  color: var(--purple-600);
+}
+
+.sub {
+  margin-top: 6px;
+  color: var(--ink-faint);
+  font-size: 0.92rem;
+}
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 18px;
+}
+
+/* --- Forms --- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+
+.field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: 2px solid var(--purple-100);
+  outline-offset: 1px;
+  border-color: var(--purple-400);
+}
+
+.field textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.phoneRow {
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 10px;
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+}
+
+/* --- Buttons --- */
+
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px 28px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--gold-500);
+  color: #302000;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: var(--gold-400);
+}
+
+.primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border: 1px solid var(--purple-600);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--purple-600);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.secondary:hover {
+  background: var(--purple-50);
+}
+
+.linkBtn {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--purple-600);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* --- Feedback --- */
+
+.error {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: #fdeceb;
+  border: 1px solid #f5c6c2;
+  color: #8c2f26;
+  font-size: 0.88rem;
+}
+
+.notice {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--purple-50);
+  border: 1px solid var(--purple-100);
+  color: var(--purple-700);
+  font-size: 0.88rem;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.empty svg {
+  color: var(--purple-400);
+}
+
+.loading {
+  padding: 64px 0;
+  text-align: center;
+  color: var(--ink-faint);
+}
+
+@media (max-width: 700px) {
+  .fieldRow {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .card {
+    padding: 20px;
+  }
+}

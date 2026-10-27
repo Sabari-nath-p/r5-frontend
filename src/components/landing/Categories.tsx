@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Package } from "lucide-react";
 import CoverImage from "../CoverImage";
+import DoodleLayer from "../doodles/DoodleLayer";
 import type { ApiCategory } from "@/lib/api";
 import styles from "./Categories.module.css";
 
@@ -11,6 +12,7 @@ export default function Categories({ categories }: { categories: ApiCategory[] }
 
   return (
     <section id="categories" className={styles.section}>
+      <DoodleLayer variant="categories" />
       <div className="container">
         <div className={styles.head}>
           <h2 className={`display ${styles.heading}`}>

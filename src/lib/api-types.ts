@@ -86,6 +86,91 @@ export type ApiAuthUser = {
   id: string;
   email: string;
   role: ApiRole;
+  name?: string | null;
+  phone?: string | null;
+  countryCode?: string | null;
+  /** False while the account still needs a name and phone number. */
+  profileComplete?: boolean;
+};
+
+// ---- Orders ----
+
+export type ApiOrderStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "PACKING"
+  | "SHIPPED"
+  | "DELIVERED"
+  | "CANCELLED";
+
+export type ApiPaymentMethod = "COD" | "CASHFREE";
+export type ApiPaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
+
+export type ApiOrderItem = {
+  id: string;
+  productId: string;
+  variationId: string;
+  productName: string;
+  productSlug: string;
+  variationName: string;
+  image: string | null;
+  unitPrice: string;
+  quantity: number;
+  lineTotal: string;
+};
+
+export type ApiOrder = {
+  id: string;
+  orderNumber: string;
+  userId: string | null;
+  customerName: string;
+  customerEmail: string;
+  countryCode: string;
+  phone: string;
+  addressLine1: string;
+  addressLine2: string | null;
+  city: string;
+  state: string;
+  zipcode: string;
+  country: string;
+  subtotal: string;
+  shipping: string;
+  total: string;
+  status: ApiOrderStatus;
+  paymentMethod: ApiPaymentMethod;
+  paymentStatus: ApiPaymentStatus;
+  deliveryPartner: string | null;
+  trackingUrl: string | null;
+  notes: string | null;
+  items: ApiOrderItem[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ApiOrderList = {
+  items: ApiOrder[];
+  total: number;
+  page: number;
+  limit: number;
+  pageCount: number;
+};
+
+/** The steps a parcel moves through, in the order they are shown to customers. */
+export const ORDER_STAGES: ApiOrderStatus[] = [
+  "PENDING",
+  "CONFIRMED",
+  "PACKING",
+  "SHIPPED",
+  "DELIVERED",
+];
+
+export const ORDER_STATUS_LABELS: Record<ApiOrderStatus, string> = {
+  PENDING: "Pending",
+  CONFIRMED: "Confirmed",
+  PACKING: "Packing",
+  SHIPPED: "Shipped",
+  DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
 };
 
 export function toNumber(value: string | number | null | undefined): number {

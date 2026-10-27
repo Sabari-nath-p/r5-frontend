@@ -1,6 +1,13 @@
 .section {
+  position: relative;
+  overflow: hidden;
   padding: 64px 0 72px;
   background: var(--paper);
+}
+
+.section > :global(.container) {
+  position: relative;
+  z-index: 1;
 }
 
 .head {

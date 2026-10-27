@@ -1,0 +1,54 @@
+.layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.item {
+  position: absolute;
+  display: block;
+}
+
+.item svg {
+  width: 100%;
+  height: auto;
+}
+
+/* Tones */
+.purple {
+  color: var(--purple-600);
+}
+
+.ink {
+  color: var(--ink);
+}
+
+.gold {
+  color: var(--gold-500);
+}
+
+.light {
+  color: #fff;
+}
+
+/* Content reclaims the margins before the doodles do */
+@media (max-width: 1240px) {
+  .secondary {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .layer {
+    display: none;
+  }
+}
+
+@media print {
+  .layer {
+    display: none;
+  }
+}

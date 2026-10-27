@@ -1,4 +1,5 @@
 import { Gift, Heart, Leaf, Sparkles, Truck } from "lucide-react";
+import DoodleLayer from "../doodles/DoodleLayer";
 import styles from "./TrustBadges.module.css";
 
 const badges = [
@@ -12,6 +13,7 @@ const badges = [
 export default function TrustBadges() {
   return (
     <section className={styles.section}>
+      <DoodleLayer variant="trust" />
       <div className={`container ${styles.row}`}>
         <Heart size={16} className={styles.deco} aria-hidden="true" />
         {badges.map(({ icon: Icon, label }) => (

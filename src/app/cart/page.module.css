@@ -1,0 +1,152 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  align-items: start;
+  gap: 24px;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 92px 1fr auto;
+  align-items: center;
+  gap: 18px;
+  padding: 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.thumb {
+  display: block;
+  width: 92px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.lineBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.lineName {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.lineName:hover {
+  color: var(--purple-600);
+}
+
+.lineVariant {
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+}
+
+.linePrice {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.lineControls {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+}
+
+.stepper button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--purple-50);
+  color: var(--purple-600);
+}
+
+.stepper button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stepper span {
+  min-width: 26px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.lineTotal {
+  min-width: 84px;
+  text-align: right;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.removeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink-faint);
+}
+
+.removeBtn:hover {
+  color: #c0392b;
+  border-color: #f5c6c2;
+}
+
+.continue {
+  display: block;
+  margin-top: 14px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .line {
+    grid-template-columns: 72px 1fr;
+    gap: 12px;
+  }
+
+  .thumb {
+    width: 72px;
+  }
+
+  .lineControls {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    gap: 10px;
+  }
+}

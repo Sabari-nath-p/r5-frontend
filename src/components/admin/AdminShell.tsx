@@ -8,6 +8,7 @@ import styles from "./AdminShell.module.css";
 
 const navItems = [
   { label: "Dashboard", href: "/myportal" },
+  { label: "Orders", href: "/myportal/orders" },
   { label: "Banners", href: "/myportal/banners" },
   { label: "Categories", href: "/myportal/categories" },
   { label: "Products", href: "/myportal/products" },

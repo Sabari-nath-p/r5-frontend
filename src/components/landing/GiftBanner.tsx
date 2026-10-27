@@ -1,5 +1,6 @@
 import { Gift } from "lucide-react";
 import PlaceholderArt from "../PlaceholderArt";
+import DoodleLayer from "../doodles/DoodleLayer";
 import styles from "./GiftBanner.module.css";
 
 export default function GiftBanner() {
@@ -9,6 +10,7 @@ export default function GiftBanner() {
         <div className={styles.panel}>
           <span className={styles.blobA} aria-hidden="true" />
           <span className={styles.blobB} aria-hidden="true" />
+          <DoodleLayer variant="gift" tone="gold" />
 
           <div className={styles.copy}>
             <h2 className={`display ${styles.heading}`}>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins, Fraunces } from "next/font/google";
+import ShopProviders from "@/lib/shop/providers";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -24,7 +25,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${poppins.variable} ${fraunces.variable}`}>
-      <body>{children}</body>
+      <body>
+        <ShopProviders>{children}</ShopProviders>
+      </body>
     </html>
   );
 }

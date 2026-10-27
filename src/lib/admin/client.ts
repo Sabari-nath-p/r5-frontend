@@ -1,8 +1,13 @@
+import { request } from "@/lib/http-client";
 import type {
   ApiAuthUser,
   ApiBanner,
   ApiCategory,
   ApiGalleryImage,
+  ApiOrder,
+  ApiOrderList,
+  ApiOrderStatus,
+  ApiPaymentStatus,
   ApiProduct,
   ApiProductList,
   ApiProductStatus,
@@ -10,40 +15,7 @@ import type {
   ApiTag,
 } from "@/lib/api-types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api";
-
-export class ApiError extends Error {
-  status: number;
-  constructor(status: number, message: string) {
-    super(message);
-    this.status = status;
-  }
-}
-
-async function request<T>(
-  path: string,
-  options: RequestInit = {},
-  token?: string | null
-): Promise<T> {
-  const isFormData = options.body instanceof FormData;
-  const headers: Record<string, string> = {
-    ...(isFormData ? {} : { "Content-Type": "application/json" }),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...((options.headers as Record<string, string>) ?? {}),
-  };
-
-  const res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
-  const text = await res.text();
-  const data = text ? JSON.parse(text) : null;
-
-  if (!res.ok) {
-    const rawMessage = data?.message ?? data?.error ?? `Request failed (${res.status})`;
-    const message = Array.isArray(rawMessage) ? rawMessage.join(", ") : String(rawMessage);
-    throw new ApiError(res.status, message);
-  }
-
-  return data as T;
-}
+export { ApiError } from "@/lib/http-client";
 
 // ---- Auth ----
 
@@ -183,4 +155,30 @@ export const productsApi = {
     request<ApiProduct>(`/products/${id}`, { method: "PATCH", body: JSON.stringify(dto) }, token),
   remove: (token: string, id: string) =>
     request<{ success: boolean }>(`/products/${id}`, { method: "DELETE" }, token),
+};
+
+// ---- Orders ----
+
+export type OrderUpdateInput = {
+  status?: ApiOrderStatus;
+  paymentStatus?: ApiPaymentStatus;
+  deliveryPartner?: string;
+  trackingUrl?: string;
+  notes?: string;
+};
+
+export const ordersApi = {
+  list: (
+    token: string,
+    params: { page?: number; limit?: number; status?: ApiOrderStatus; search?: string } = {}
+  ) => {
+    const qs = new URLSearchParams();
+    qs.set("page", String(params.page ?? 1));
+    qs.set("limit", String(params.limit ?? 50));
+    if (params.status) qs.set("status", params.status);
+    if (params.search) qs.set("search", params.search);
+    return request<ApiOrderList>(`/orders?${qs.toString()}`, {}, token);
+  },
+  update: (token: string, id: string, dto: OrderUpdateInput) =>
+    request<ApiOrder>(`/orders/${id}`, { method: "PATCH", body: JSON.stringify(dto) }, token),
 };

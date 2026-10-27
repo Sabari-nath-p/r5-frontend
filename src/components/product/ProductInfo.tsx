@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Gem, Heart, Minus, Plus, ShieldCheck, ShoppingBag, Truck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Check, Gem, Heart, Minus, Plus, ShieldCheck, ShoppingBag, Truck } from "lucide-react";
 import { cheapestVariation, toNumber, type ApiProduct } from "@/lib/api-types";
+import { useCart } from "@/lib/shop/cart-context";
 import { tiptapToPlainText } from "@/lib/tiptap-text";
 import styles from "./ProductInfo.module.css";
 
@@ -14,9 +16,12 @@ const trustItems = [
 ];
 
 export default function ProductInfo({ product }: { product: ApiProduct }) {
+  const router = useRouter();
+  const { add } = useCart();
   const defaultVariation = cheapestVariation(product.variations) ?? product.variations[0];
   const [variationId, setVariationId] = useState(defaultVariation?.id);
   const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
 
   const variation =
     product.variations.find((v) => v.id === variationId) ?? defaultVariation;
@@ -29,6 +34,20 @@ export default function ProductInfo({ product }: { product: ApiProduct }) {
     : undefined;
   const stock = variation?.stock ?? 0;
   const summary = product.metaDescription ?? tiptapToPlainText(product.description).slice(0, 220);
+
+  function addToCart() {
+    if (!variation) return;
+    add(product, variation, quantity);
+    setAdded(true);
+    // Reset the confirmation so a second add reads as a fresh action.
+    window.setTimeout(() => setAdded(false), 2000);
+  }
+
+  function buyNow() {
+    if (!variation) return;
+    add(product, variation, quantity);
+    router.push("/checkout");
+  }
 
   return (
     <div className={styles.info}>
@@ -99,11 +118,21 @@ export default function ProductInfo({ product }: { product: ApiProduct }) {
       </div>
 
       <div className={styles.actions}>
-        <button type="button" className={styles.addToCart} disabled={stock === 0}>
-          <ShoppingBag size={17} />
-          Add to Cart
+        <button
+          type="button"
+          className={styles.addToCart}
+          disabled={stock === 0}
+          onClick={addToCart}
+        >
+          {added ? <Check size={17} /> : <ShoppingBag size={17} />}
+          {added ? "Added to Cart" : "Add to Cart"}
         </button>
-        <button type="button" className={styles.buyNow} disabled={stock === 0}>
+        <button
+          type="button"
+          className={styles.buyNow}
+          disabled={stock === 0}
+          onClick={buyNow}
+        >
           Buy Now
         </button>
       </div>

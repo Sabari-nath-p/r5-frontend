@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import ProductCard from "../ProductCard";
+import DoodleLayer from "../doodles/DoodleLayer";
 import type { ApiCategory, ApiProduct } from "@/lib/api-types";
 import styles from "./FeaturedProducts.module.css";
 
@@ -19,6 +20,7 @@ export default function FeaturedProducts({
 
   return (
     <section id="shop" className={styles.section}>
+      <DoodleLayer variant="featured" />
       <div className="container">
         <div className={styles.head}>
           <h2 className={`display ${styles.heading}`}>

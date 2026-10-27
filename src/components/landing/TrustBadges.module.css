@@ -1,4 +1,6 @@
 .section {
+  position: relative;
+  overflow: hidden;
   padding: 40px 0;
   background: var(--cream);
   border-top: 1px solid var(--line);
@@ -6,6 +8,8 @@
 }
 
 .row {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;

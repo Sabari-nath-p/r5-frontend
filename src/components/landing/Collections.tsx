@@ -1,5 +1,6 @@
 import { Flower2, Gift, NotebookPen } from "lucide-react";
 import PlaceholderArt from "../PlaceholderArt";
+import DoodleLayer from "../doodles/DoodleLayer";
 import styles from "./Collections.module.css";
 
 const collections = [
@@ -26,6 +27,7 @@ const collections = [
 export default function Collections() {
   return (
     <section className={styles.section}>
+      <DoodleLayer variant="collections" />
       <div className="container">
         <h2 className={`display ${styles.heading}`}>
           Explore Our <span>Collections</span>

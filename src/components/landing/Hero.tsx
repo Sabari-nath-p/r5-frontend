@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight, Gift, Heart, Leaf, Truck } from "lucide-react";
+import DoodleLayer from "../doodles/DoodleLayer";
 import styles from "./Hero.module.css";
 
 const features = [
@@ -28,6 +29,7 @@ function HeartDoodle({ className }: { className?: string }) {
 export default function Hero() {
   return (
     <section className={styles.hero}>
+      <DoodleLayer variant="hero" />
       <div className={`container ${styles.grid}`}>
         <div className={styles.copy}>
           <p className={styles.overline}>

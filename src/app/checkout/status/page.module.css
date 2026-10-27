@@ -1,0 +1,78 @@
+.banner,
+.bannerFailed {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+}
+
+.banner {
+  background: #e4f5ea;
+  border: 1px solid #bfe3cc;
+  color: #1f6b3d;
+}
+
+.bannerFailed {
+  background: #fdeceb;
+  border: 1px solid #f5c6c2;
+  color: #8c2f26;
+}
+
+.banner svg,
+.bannerFailed svg {
+  flex-shrink: 0;
+}
+
+.bannerTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.bannerText {
+  margin-top: 3px;
+  font-size: 0.88rem;
+  opacity: 0.85;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.lookup {
+  max-width: 440px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.lookup svg {
+  color: var(--gold-600);
+  margin-bottom: 14px;
+}
+
+.lookup form {
+  margin-top: 22px;
+  text-align: left;
+}
+
+.spin {
+  display: inline-block;
+  vertical-align: -4px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+}

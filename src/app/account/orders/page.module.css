@@ -1,0 +1,145 @@
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.orders {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+}
+
+.order {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.order:hover {
+  border-color: var(--purple-100);
+  transform: translateY(-2px);
+}
+
+.thumbs {
+  display: flex;
+  align-items: center;
+}
+
+.thumb {
+  display: block;
+  width: 48px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid #fff;
+  margin-left: -12px;
+}
+
+.thumb:first-child {
+  margin-left: 0;
+}
+
+.more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-left: -12px;
+  border: 2px solid #fff;
+  border-radius: var(--radius-sm);
+  background: var(--purple-50);
+  color: var(--purple-600);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.number {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.meta {
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+}
+
+.total {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.chevron {
+  color: var(--ink-faint);
+}
+
+.pillPENDING,
+.pillCONFIRMED,
+.pillPACKING,
+.pillSHIPPED,
+.pillDELIVERED,
+.pillCANCELLED {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pillPENDING {
+  background: #fdf3d9;
+  color: #7a5806;
+}
+
+.pillCONFIRMED,
+.pillPACKING {
+  background: var(--purple-50);
+  color: var(--purple-700);
+}
+
+.pillSHIPPED {
+  background: #e3f0fb;
+  color: #1c5a8c;
+}
+
+.pillDELIVERED {
+  background: #e4f5ea;
+  color: #1f6b3d;
+}
+
+.pillCANCELLED {
+  background: #fdeceb;
+  color: #8c2f26;
+}
+
+@media (max-width: 760px) {
+  .order {
+    grid-template-columns: auto 1fr auto;
+    row-gap: 12px;
+  }
+
+  .chevron {
+    display: none;
+  }
+
+  .total {
+    grid-column: 3;
+  }
+}

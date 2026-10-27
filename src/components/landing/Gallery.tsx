@@ -1,5 +1,6 @@
 import { Camera, Image as ImageIcon } from "lucide-react";
 import CoverImage from "../CoverImage";
+import DoodleLayer from "../doodles/DoodleLayer";
 import type { ApiGalleryImage } from "@/lib/api";
 import styles from "./Gallery.module.css";
 
@@ -10,6 +11,7 @@ export default function Gallery({ images }: { images: ApiGalleryImage[] }) {
 
   return (
     <section className={styles.section}>
+      <DoodleLayer variant="gallery" />
       <div className="container">
         <div className={styles.head}>
           <div>

@@ -35,7 +35,7 @@ export default async function ProductPage({
 
   return (
     <>
-      <Navbar active="Shop" cartCount={2} categories={categories} />
+      <Navbar active="Shop" categories={categories} />
       <main>
         <Breadcrumb category={product.category.name} current={product.name} />
 

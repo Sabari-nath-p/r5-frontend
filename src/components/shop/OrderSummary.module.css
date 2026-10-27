@@ -1,0 +1,97 @@
+.summary {
+  position: sticky;
+  top: 24px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.heading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.lines li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.88rem;
+}
+
+.lineName {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.lineMeta {
+  color: var(--ink-faint);
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+.lineTotal {
+  flex-shrink: 0;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.totals {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 0;
+}
+
+.totals > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.totals dd {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.grand {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.grand dt {
+  font-weight: 700;
+  color: var(--ink) !important;
+  font-size: 1rem;
+}
+
+.grand dd {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--purple-600) !important;
+}
+
+.freeHint {
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: #fdf3d9;
+  color: #7a5806;
+  font-size: 0.8rem;
+}

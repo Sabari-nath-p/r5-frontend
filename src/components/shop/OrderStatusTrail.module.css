@@ -1,0 +1,120 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.trail {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  list-style: none;
+}
+
+.trail li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  text-align: center;
+}
+
+/* The connector sits behind the dots and stops at the last step. */
+.trail li::before {
+  content: "";
+  position: absolute;
+  top: 13px;
+  left: calc(-50% + 14px);
+  width: calc(100% - 28px);
+  height: 2px;
+  background: var(--line);
+}
+
+.trail li:first-child::before {
+  display: none;
+}
+
+.done::before,
+.current::before {
+  background: var(--purple-400) !important;
+}
+
+.dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background: #fff;
+  color: var(--ink-faint);
+  font-size: 0.75rem;
+  font-weight: 700;
+  z-index: 1;
+}
+
+.label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink-faint);
+}
+
+.done .dot {
+  background: var(--purple-500);
+  border-color: var(--purple-500);
+  color: #fff;
+}
+
+.done .label {
+  color: var(--ink-soft);
+}
+
+.current .dot {
+  background: var(--gold-500);
+  border-color: var(--gold-500);
+  color: #302000;
+  box-shadow: 0 0 0 4px rgba(243, 181, 41, 0.22);
+}
+
+.current .label {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.tracking {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--purple-600);
+  color: var(--purple-600);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.tracking:hover {
+  background: var(--purple-50);
+}
+
+.cancelled {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: #fdeceb;
+  border: 1px solid #f5c6c2;
+  color: #8c2f26;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .label {
+    font-size: 0.68rem;
+  }
+}

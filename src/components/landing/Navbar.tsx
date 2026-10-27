@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ChevronDown, Heart, Search, ShoppingBag, User } from "lucide-react";
+import { ChevronDown, Heart, Search } from "lucide-react";
+import NavActions from "./NavActions";
 import type { ApiCategory } from "@/lib/api";
 import styles from "./Navbar.module.css";
 
@@ -13,11 +14,10 @@ const links = [
 
 interface NavbarProps {
   active?: string;
-  cartCount?: number;
   categories?: ApiCategory[];
 }
 
-export default function Navbar({ active = "Home", cartCount = 1, categories = [] }: NavbarProps) {
+export default function Navbar({ active = "Home", categories = [] }: NavbarProps) {
   return (
     <header className={styles.header}>
       <div className={`container ${styles.bar}`}>
@@ -79,16 +79,7 @@ export default function Navbar({ active = "Home", cartCount = 1, categories = []
             <input type="search" placeholder="Search handmade happiness..." />
           </label>
 
-          <button type="button" className={styles.iconBtn} aria-label="Account">
-            <User size={19} strokeWidth={1.8} />
-          </button>
-          <button type="button" className={styles.iconBtn} aria-label="Wishlist">
-            <Heart size={19} strokeWidth={1.8} />
-          </button>
-          <button type="button" className={styles.iconBtn} aria-label="Cart">
-            <ShoppingBag size={19} strokeWidth={1.8} />
-            {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
-          </button>
+          <NavActions />
         </div>
       </div>
     </header>
