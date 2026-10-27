@@ -26,12 +26,15 @@
   --max-width: 1280px;
 
   /*
-   * Meme fonts, served from the system rather than loaded: Comic Sans for
-   * running text, Impact for display. Each stack names the Windows, macOS and
-   * Linux equivalents before falling back to a generic family.
+   * Comic Sans for running text, Impact for display. Each stack names the
+   * Windows, macOS and Linux equivalents first, then the webfont loaded in
+   * app/layout.tsx — phones have none of the system faces, and without that
+   * downloaded fallback they rendered the generic `cursive` instead.
    */
-  --font-body: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive;
-  --font-display: Impact, Haettenschweiler, "Franklin Gothic Bold", "Arial Black", sans-serif;
+  --font-body: "Comic Sans MS", "Comic Sans", "Chalkboard SE", var(--font-comic),
+    "Comic Neue", sans-serif;
+  --font-display: Impact, Haettenschweiler, "Franklin Gothic Bold", "Arial Black",
+    var(--font-anton), sans-serif;
 }
 
 html {
@@ -93,21 +96,6 @@ svg {
 
 .display {
   font-family: var(--font-display), Georgia, serif;
-}
-
-/*
- * Comic Sans renders thin on small screens, so storefront copy steps up to the
- * bold cut on phones. The admin portal keeps its own weights — it is set in a
- * UI sans where 400 is already solid.
- */
-@media (max-width: 760px) {
-  body {
-    font-weight: 600;
-  }
-
-  [data-admin-portal] {
-    font-weight: 400;
-  }
 }
 
 /*
