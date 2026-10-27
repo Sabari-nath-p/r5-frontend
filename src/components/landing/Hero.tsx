@@ -71,14 +71,14 @@ export default function Hero() {
             </a>
           </div>
 
-          <ul className={styles.features}>
+          {/* <ul className={styles.features}>
             {features.map(({ icon: Icon, label }) => (
               <li key={label}>
                 <Icon size={21} strokeWidth={1.8} />
                 <span>{label}</span>
               </li>
             ))}
-          </ul>
+          </ul> */}
         </div>
 
         <div className={styles.visual}>
