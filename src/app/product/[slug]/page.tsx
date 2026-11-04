@@ -2,8 +2,7 @@ import { notFound } from "next/navigation";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import Breadcrumb from "@/components/product/Breadcrumb";
-import Gallery from "@/components/product/Gallery";
-import ProductInfo from "@/components/product/ProductInfo";
+import ProductView from "@/components/product/ProductView";
 import ProductTabs from "@/components/product/ProductTabs";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import { getCategories, getProductBySlug, getProducts } from "@/lib/api";
@@ -41,8 +40,7 @@ export default async function ProductPage({
 
         <section className="container">
           <div className={styles.top}>
-            <Gallery images={product.images} name={product.name} />
-            <ProductInfo product={product} />
+            <ProductView product={product} />
           </div>
         </section>
 

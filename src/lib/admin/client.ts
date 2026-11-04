@@ -127,6 +127,7 @@ export type ProductVariationInput = {
   strikeThroughPrice?: number;
   stock: number;
   sku?: string;
+  images?: ProductImageInput[];
 };
 
 export type ProductInput = {

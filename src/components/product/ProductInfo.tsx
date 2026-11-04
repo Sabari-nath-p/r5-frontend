@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Gem, Heart, Minus, Plus, ShieldCheck, ShoppingBag, Trash2, Truck } from "lucide-react";
-import { cheapestVariation, toNumber, type ApiProduct } from "@/lib/api-types";
+import { toNumber, type ApiProduct } from "@/lib/api-types";
 import { useCart } from "@/lib/shop/cart-context";
 import { tiptapToPlainText } from "@/lib/tiptap-text";
 import styles from "./ProductInfo.module.css";
@@ -16,15 +16,21 @@ const trustItems = [
   { icon: Truck, label: "Worldwide Delivery" },
 ];
 
-export default function ProductInfo({ product }: { product: ApiProduct }) {
+export default function ProductInfo({
+  product,
+  variationId,
+  onVariationChange,
+}: {
+  product: ApiProduct;
+  variationId: string | undefined;
+  onVariationChange: (variationId: string) => void;
+}) {
   const router = useRouter();
   const { lines, add, remove } = useCart();
-  const defaultVariation = cheapestVariation(product.variations) ?? product.variations[0];
-  const [variationId, setVariationId] = useState(defaultVariation?.id);
   const [quantity, setQuantity] = useState(1);
 
   const variation =
-    product.variations.find((v) => v.id === variationId) ?? defaultVariation;
+    product.variations.find((v) => v.id === variationId) ?? product.variations[0];
 
   // The button follows the cart itself rather than a transient "added" flag, so
   // it still reads correctly after a reload or a change made on the cart page.
@@ -86,7 +92,7 @@ export default function ProductInfo({ product }: { product: ApiProduct }) {
                 disabled={v.stock === 0}
                 className={v.id === variation?.id ? styles.variantPillActive : styles.variantPill}
                 onClick={() => {
-                  setVariationId(v.id);
+                  onVariationChange(v.id);
                   setQuantity(1);
                 }}
               >

@@ -30,6 +30,7 @@ export type ApiProductVariation = {
   strikeThroughPrice: string | null;
   stock: number;
   sku: string | null;
+  images: ApiProductImage[];
 };
 
 export type ApiProduct = {

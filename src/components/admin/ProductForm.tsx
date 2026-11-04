@@ -26,7 +26,14 @@ function emptyImage(): ProductImageInput {
 }
 
 function emptyVariation(): ProductVariationInput {
-  return { name: "", price: 0, strikeThroughPrice: undefined, stock: 0, sku: "" };
+  return {
+    name: "",
+    price: 0,
+    strikeThroughPrice: undefined,
+    stock: 0,
+    sku: "",
+    images: [],
+  };
 }
 
 /**
@@ -70,6 +77,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
           strikeThroughPrice: v.strikeThroughPrice ? Number(v.strikeThroughPrice) : undefined,
           stock: v.stock,
           sku: v.sku ?? "",
+          images: v.images.map((img) => ({ url: img.url, sortOrder: img.sortOrder })),
         }))
       : [emptyVariation()]
   );
@@ -101,6 +109,43 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
 
   function updateVariation(index: number, patch: Partial<ProductVariationInput>) {
     setVariations((prev) => prev.map((row, i) => (i === index ? { ...row, ...patch } : row)));
+  }
+
+  function addVariationImage(variationIndex: number) {
+    setVariations((prev) =>
+      prev.map((row, i) =>
+        i === variationIndex ? { ...row, images: [...(row.images ?? []), emptyImage()] } : row
+      )
+    );
+  }
+
+  function updateVariationImage(
+    variationIndex: number,
+    imageIndex: number,
+    patch: Partial<ProductImageInput>
+  ) {
+    setVariations((prev) =>
+      prev.map((row, i) =>
+        i === variationIndex
+          ? {
+              ...row,
+              images: (row.images ?? []).map((img, j) =>
+                j === imageIndex ? { ...img, ...patch } : img
+              ),
+            }
+          : row
+      )
+    );
+  }
+
+  function removeVariationImage(variationIndex: number, imageIndex: number) {
+    setVariations((prev) =>
+      prev.map((row, i) =>
+        i === variationIndex
+          ? { ...row, images: (row.images ?? []).filter((_, j) => j !== imageIndex) }
+          : row
+      )
+    );
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -144,6 +189,9 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
             : undefined,
         stock: Number(v.stock),
         sku: v.sku || undefined,
+        images: (v.images ?? [])
+          .filter((img) => img.url.trim().length > 0)
+          .map((img, i) => ({ url: img.url, sortOrder: img.sortOrder ?? i })),
       })),
     };
 
@@ -278,6 +326,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
                   <span className={styles.repeatIndex}>
                     <GripVertical size={13} />
                   </span>
+                  <div className={local.variationBody}>
                   <div className={local.variationGrid}>
                     <div className={styles.field}>
                       <label className={styles.label}>Name</label>
@@ -340,6 +389,44 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
                         onChange={(e) => updateVariation(i, { sku: e.target.value })}
                       />
                     </div>
+                  </div>
+
+                  <div className={local.variationImages}>
+                    <div className={local.variationImagesHeader}>
+                      <span className={styles.label}>
+                        Variant images
+                        <span className={styles.cardMeta}> — shown when this option is selected</span>
+                      </span>
+                      <button
+                        type="button"
+                        className={`${styles.buttonSecondary} ${styles.buttonSmall}`}
+                        onClick={() => addVariationImage(i)}
+                      >
+                        <Plus size={13} /> Add image
+                      </button>
+                    </div>
+                    {(v.images ?? []).length > 0 && (
+                      <div className={local.variationImagesList}>
+                        {(v.images ?? []).map((img, j) => (
+                          <div className={local.variationImageItem} key={j}>
+                            <ImageUploadField
+                              value={img.url}
+                              onChange={(url) => updateVariationImage(i, j, { url })}
+                              onUpload={onUpload}
+                            />
+                            <button
+                              type="button"
+                              className={`${styles.iconButton} ${styles.iconButtonDanger}`}
+                              onClick={() => removeVariationImage(i, j)}
+                              aria-label={`Remove variant image ${j + 1}`}
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   </div>
                   {variations.length > 1 && (
                     <button
