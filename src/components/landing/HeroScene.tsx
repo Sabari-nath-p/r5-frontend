@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
+import { Smartphone } from "lucide-react";
+import { requestTiltPermission, tiltNeedsPermission, watchDeviceTilt } from "./deviceTilt";
 import type { FounderSceneHandle } from "./hero3d/createFounderScene";
 import styles from "./Hero.module.css";
 
@@ -23,6 +25,17 @@ export default function HeroScene({ children, overlay }: { children: ReactNode; 
   const figureRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const [off, setOff] = useState(false);
+  const [askTilt, setAskTilt] = useState(false);
+  const startTiltRef = useRef<() => void>(() => {});
+
+  const enableTilt = async () => {
+    setAskTilt(false);
+    try {
+      if (await requestTiltPermission()) startTiltRef.current();
+    } catch (error) {
+      console.warn("[hero] tilt unavailable:", error);
+    }
+  };
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -57,6 +70,30 @@ export default function HeroScene({ children, overlay }: { children: ReactNode; 
       stage.style.setProperty("--mx", ((event.clientX / window.innerWidth) * 2 - 1).toFixed(3));
       stage.style.setProperty("--my", ((event.clientY / window.innerHeight) * 2 - 1).toFixed(3));
     };
+    let stopTilt: (() => void) | null = null;
+    const startTilt = () => {
+      stopTilt ??= watchDeviceTilt((x, y) => {
+        stage.style.setProperty("--mx", x.toFixed(3));
+        stage.style.setProperty("--my", y.toFixed(3));
+        handle?.setTilt(x, y);
+      });
+    };
+    startTiltRef.current = startTilt;
+
+    // Tilt is for phones and tablets. iOS only lets a page ask from a tap, unless
+    // this visitor already agreed earlier in the session, which is worth trying first.
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      if (tiltNeedsPermission()) {
+        requestTiltPermission()
+          .then((granted) => {
+            if (granted) startTilt();
+          })
+          .catch(() => setAskTilt(true));
+      } else {
+        startTilt();
+      }
+    }
+
     readScroll();
     window.addEventListener("scroll", readScroll, { passive: true });
     window.addEventListener("resize", readScroll, { passive: true });
@@ -101,6 +138,8 @@ export default function HeroScene({ children, overlay }: { children: ReactNode; 
       window.removeEventListener("scroll", readScroll);
       window.removeEventListener("resize", readScroll);
       window.removeEventListener("pointermove", readPointer);
+      stopTilt?.();
+      startTiltRef.current = () => {};
       handle?.dispose();
       canvas.remove();
       setReady(false);
@@ -123,6 +162,12 @@ export default function HeroScene({ children, overlay }: { children: ReactNode; 
           />
         </div>
         {overlay}
+        {askTilt && ready && (
+          <button type="button" className={styles.tiltPrompt} onClick={enableTilt}>
+            <Smartphone size={15} aria-hidden="true" />
+            Tap, then tilt your phone
+          </button>
+        )}
       </div>
     </section>
   );

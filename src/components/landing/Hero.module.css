@@ -92,6 +92,7 @@
 
 .bubble {
   --size: clamp(84px, 8vw, 122px);
+  --reach: 1px;
   position: absolute;
   left: var(--x);
   top: var(--y);
@@ -99,8 +100,8 @@
   pointer-events: auto;
   /* Near bubbles follow the cursor further; on scroll they drift off to the sides. */
   transform: translate(
-    calc(-50% + var(--mx) * var(--depth) * 1px + var(--p) * var(--side) * 26vw),
-    calc(-50% + var(--my) * var(--depth) * 0.6px - var(--p) * 8svh)
+    calc(-50% + var(--mx) * var(--depth) * var(--reach) + var(--p) * var(--side) * 26vw),
+    calc(-50% + var(--my) * var(--depth) * var(--reach) * 0.6 - var(--p) * 8svh)
   );
   opacity: clamp(0, calc(1 - var(--p) * 2.1), 1);
   will-change: transform, opacity;
@@ -221,6 +222,27 @@
   outline-offset: 3px;
 }
 
+/* Only on iPhones and iPads, which need a tap before a page can read tilt. */
+.tiltPrompt {
+  position: absolute;
+  z-index: 3;
+  bottom: calc(2svh + 66px);
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 20px -10px rgba(58, 31, 102, 0.6);
+  color: var(--purple-950);
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
 /* --- Phones: stacked letters on top, four small bubbles at her sides ------- */
 @media (max-width: 899px) {
   .hero {
@@ -238,8 +260,10 @@
     height: 68%;
   }
 
+  /* Phones sit close to the screen edge: a small drift keeps the labels on screen. */
   .bubble {
     --size: clamp(54px, 14.5vw, 88px);
+    --reach: 0.16px;
   }
 
   .bubble:nth-child(n + 5) {

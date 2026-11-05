@@ -20,6 +20,8 @@ const MAX_LOOK_PITCH = 0.15;
 export type FounderSceneHandle = {
   /** 0 at the top of the hero, 1 when the pinned scroll has finished. */
   setScroll: (progress: number) => void;
+  /** The phone's tilt, -1..1 on each axis; steers her where there's no cursor. */
+  setTilt: (x: number, y: number) => void;
   dispose: () => void;
 };
 
@@ -94,6 +96,8 @@ export async function createFounderScene({ canvas, container, onReady }: Options
     pointerSeen = performance.now();
   };
   window.addEventListener("pointermove", onPointerMove, { passive: true });
+  const tilt = new THREE.Vector2();
+  let tiltSeen = -Infinity;
 
   const look = { yaw: 0, pitch: 0, yawTarget: 0, pitchTarget: 0, gazeX: 0, gazeY: 0, sway: 0 };
   const headScreen = new THREE.Vector3();
@@ -118,8 +122,12 @@ export async function createFounderScene({ canvas, container, onReady }: Options
     const turn = easeInOut(clamp(scrollNow, 0, 1));
     const arrive = easeOutCubic(clamp(time / 1.1, 0, 1));
 
-    if (now - pointerSeen > 3500) {
-      // Nobody's steering (touch, or a still mouse): she glances around by herself.
+    if (now - pointerSeen > 3500 && now - tiltSeen < 2500) {
+      // Tilted right, she looks right; tipped back toward the visitor, she looks up.
+      look.yawTarget = tilt.x * MAX_LOOK_YAW;
+      look.pitchTarget = tilt.y * MAX_LOOK_PITCH;
+    } else if (now - pointerSeen > 3500) {
+      // Nobody's steering (a still phone or mouse): she glances around by herself.
       look.yawTarget = Math.sin(time * 0.43) * 0.13 + Math.sin(time * 0.17) * 0.08;
       look.pitchTarget = Math.sin(time * 0.31) * 0.03;
     } else {
@@ -197,6 +205,10 @@ export async function createFounderScene({ canvas, container, onReady }: Options
   return {
     setScroll: (progress) => {
       scrollTarget = progress;
+    },
+    setTilt: (x, y) => {
+      tilt.set(x, y);
+      tiltSeen = performance.now();
     },
     dispose: () => {
       cancelAnimationFrame(frame);
