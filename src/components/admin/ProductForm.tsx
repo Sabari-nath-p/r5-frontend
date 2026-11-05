@@ -17,6 +17,7 @@ import {
 import type { ApiCategory, ApiProduct, ApiProductStatus, ApiTag } from "@/lib/api-types";
 import { plainTextToTiptap, tiptapToPlainText } from "@/lib/tiptap-text";
 import ImageUploadField from "./ImageUploadField";
+import ProductImages, { newGalleryId, type GalleryItem } from "./ProductImages";
 import { useToast } from "./Toast";
 import styles from "./admin.module.css";
 import local from "./ProductForm.module.css";
@@ -64,10 +65,13 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
   const [selectedTags, setSelectedTags] = useState<string[]>(
     initialProduct?.tags.map((t) => t.name) ?? []
   );
-  const [images, setImages] = useState<ProductImageInput[]>(
-    initialProduct && initialProduct.images.length > 0
-      ? initialProduct.images.map((img) => ({ url: img.url, sortOrder: img.sortOrder }))
-      : [emptyImage()]
+  // Starts empty on create: no placeholder row, just the drop zone.
+  const [images, setImages] = useState<GalleryItem[]>(
+    initialProduct
+      ? [...initialProduct.images]
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map((img) => ({ id: newGalleryId(), url: img.url }))
+      : []
   );
   const [variations, setVariations] = useState<ProductVariationInput[]>(
     initialProduct && initialProduct.variations.length > 0
@@ -101,10 +105,6 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
     if (!value) return;
     if (!selectedTags.includes(value)) setSelectedTags((prev) => [...prev, value]);
     setNewTagName("");
-  }
-
-  function updateImage(index: number, patch: Partial<ProductImageInput>) {
-    setImages((prev) => prev.map((row, i) => (i === index ? { ...row, ...patch } : row)));
   }
 
   function updateVariation(index: number, patch: Partial<ProductVariationInput>) {
@@ -152,6 +152,10 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
     e.preventDefault();
     setError(null);
 
+    if (images.some((img) => img.uploading)) {
+      setError("Wait for the images to finish uploading.");
+      return;
+    }
     const validImages = images.filter((img) => img.url.trim().length > 0);
     if (validImages.length === 0) {
       setError("Add at least one product image.");
@@ -177,7 +181,7 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
       metaImage: metaImage || undefined,
       description: plainTextToTiptap(descriptionText),
       tags: selectedTags,
-      images: validImages.map((img, i) => ({ url: img.url, sortOrder: img.sortOrder ?? i })),
+      images: validImages.map((img, i) => ({ url: img.url, sortOrder: i })),
       variations: validVariations.map((v) => ({
         name: v.name,
         price: Number(v.price),
@@ -258,50 +262,11 @@ export default function ProductForm({ initialProduct }: { initialProduct?: ApiPr
           <div className={styles.cardHeader}>
             <div>
               <span className={styles.cardTitle}>Images</span>
-              <p className={styles.cardMeta}>The lowest sort order becomes the cover image.</p>
+              <p className={styles.cardMeta}>Upload several at once, then drag to set the order.</p>
             </div>
-            <button
-              type="button"
-              className={`${styles.buttonSecondary} ${styles.buttonSmall}`}
-              onClick={() => setImages((prev) => [...prev, emptyImage()])}
-            >
-              <Plus size={14} /> Add image
-            </button>
           </div>
           <div className={styles.cardPad}>
-            <div className={styles.repeatList}>
-              {images.map((img, i) => (
-                <div className={styles.repeatRow} key={i}>
-                  <span className={styles.repeatIndex}>{i + 1}</span>
-                  <div className={styles.repeatFields} style={{ gridTemplateColumns: "1fr" }}>
-                    <ImageUploadField
-                      value={img.url}
-                      onChange={(url) => updateImage(i, { url })}
-                      onUpload={onUpload}
-                    />
-                    <div className={styles.field} style={{ maxWidth: 170 }}>
-                      <label className={styles.label}>Sort order</label>
-                      <input
-                        type="number"
-                        className={styles.input}
-                        value={img.sortOrder ?? 0}
-                        onChange={(e) => updateImage(i, { sortOrder: Number(e.target.value) })}
-                      />
-                    </div>
-                  </div>
-                  {images.length > 1 && (
-                    <button
-                      type="button"
-                      className={`${styles.iconButton} ${styles.iconButtonDanger}`}
-                      onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
-                      aria-label={`Remove image ${i + 1}`}
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
+            <ProductImages items={images} onChange={setImages} onUpload={onUpload} />
           </div>
         </section>
 
