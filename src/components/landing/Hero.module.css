@@ -561,6 +561,30 @@
     padding: 6px 0 0;
   }
 
+  /* Phones get the scene and a straight route to the shop: no copy block. The
+     headline stays for screen readers and search engines, just not on screen. */
+  .overline,
+  .lead,
+  .startingAt,
+  .search,
+  .chips {
+    display: none;
+  }
+
+  .headline {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .ctaRow {
+    margin-bottom: 0;
+  }
+
   .overline {
     font-size: 0.7rem;
     margin-bottom: 12px;
