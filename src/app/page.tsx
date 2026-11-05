@@ -26,7 +26,7 @@ export default async function Home() {
     <>
       <Navbar categories={categories} />
       <main>
-        <Hero products={featured} categories={categories} />
+        <Hero categories={categories} />
         {/* Banner images come from the admin portal (/myportal/banners). */}
         <BannerSlider banners={banners} />
         <Categories categories={categories} />
